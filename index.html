@@ -1,19 +1,111 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Dwi Nanda – Backend Engineer</title>
-    <meta name="description" content="Portfolio of Dwi Nanda, Software Engineer specializing in backend systems and OCR automation.">
-  </head>
-  <body>
-    <h1>Dwi Nanda</h1>
-    <p>Backend Software Engineer</p>
-    <p>Email: dwnnd09@gmail.com</p>
-    <p><a href="https://github.com/dwinanda09">GitHub</a> | <a href="https://www.linkedin.com/in/dwi-nanda-3ba842103/">LinkedIn</a></p>
-    <h2>Projects</h2>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Portfolio of Dwi Nanda, Backend Software Engineer specializing in systems architecture, OCR automation, and financial integration." />
+  <title>Dwi Nanda – Backend Engineer Portfolio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.2em;
+    }
+    h2 {
+      margin-top: 2rem;
+      color: #444;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    .contact, .links {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .project {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .project h3 {
+      margin-top: 0;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      margin-top: 3rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Dwi Nanda Susanto</h1>
+    <p>Backend Software Engineer — Jakarta, Indonesia</p>
+    <div class="links">
+      <a href="https://github.com/dwinanda09">GitHub</a> |
+      <a href="https://www.linkedin.com/in/dwi-nanda-3ba842103/">LinkedIn</a> |
+      <a href="mailto:dwnnd09@gmail.com">Email</a> |
+      <a href="resume.pdf" download>Download Resume</a>
+    </div>
+  </header>
+
+  <h2>Projects</h2>
+
+  <div class="project">
+    <h3>📄 OCR Invoice Automation System (V2)</h3>
+    <p>Scalable system to process 1,500+ files/hour using dynamic configs and FCFS queue with Slack + Xero integration.</p>
     <ul>
-      <li><b>OCR Invoice Automation</b> – Scalable system to handle >1,500 files/hr via RabbitMQ + Xero integration</li>
-      <li><b>Virtual Corporate Card</b> – TPV of IDR 100M+, built API for Horizon Card system</li>
+      <li>99%+ success rate across high-volume clients</li>
+      <li>Used Go, NSQ, MongoDB, and GCP services</li>
     </ul>
-  </body>
+  </div>
+
+  <div class="project">
+    <h3>💳 Horizon Virtual Corporate Card</h3>
+    <p>Developed card services & TPV tracking for financial ops team, supporting IDR 100M+ enterprise transactions.</p>
+    <ul>
+      <li>Built using NestJS, PostgreSQL, Kafka</li>
+      <li>Includes approval workflows & notification system</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <h3>🔗 Xero Integration for Qoala App</h3>
+    <p>Designed API sync layer to automate invoicing & financial sync, reducing accounting errors by 20%.</p>
+  </div>
+
+  <div class="project">
+    <h3>💊 Pharmacy & ERP API Infrastructure</h3>
+    <p>Refactored legacy services for better latency (30s ➝ 3s) and maintained B2B integrations with WhatsApp + Slack OTP.</p>
+  </div>
+
+  <div class="project">
+    <h3>📦 Tokopedia Digital Products</h3>
+    <p>Owned digital bill catalogue, implemented load testing, and ensured SDLC security as team’s Security Champion.</p>
+  </div>
+
+  <h2>Tech Stack</h2>
+  <p>Go, NestJS (TypeScript), Express, Laravel, PostgreSQL, MongoDB, Redis, NSQ, Kafka, gRPC, REST, GraphQL, New Relic, Datadog, GCP</p>
+
+  <footer>
+    &copy; 2025 Dwi Nanda. Built with ❤️ and GitHub Pages.
+  </footer>
+
+</body>
 </html>
