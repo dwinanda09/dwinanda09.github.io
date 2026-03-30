@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dwi Nanda Susanto — Backend Software Engineer</title>
+  <meta name="description" content="Portfolio of Dwi Nanda Susanto — Backend Software Engineer specializing in distributed systems, Go, and scalable backend architectures." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #020617;
+      --bg-card:   #0f172a;
+      --bg-card2:  rgba(15,23,42,0.5);
+      --border:    #1e293b;
+      --text:      #cbd5e1;
+      --text-dim:  #64748b;
+      --text-muted:#475569;
+      --white:     #f8fafc;
+      --cyan:      #06b6d4;
+      --cyan-light:#67e8f9;
+      --cyan-dark: #0e7490;
+      --cyan-bg:   rgba(8,145,178,0.15);
+      --cyan-bd:   rgba(8,145,178,0.3);
+      --blue:      #60a5fa;
+      --blue-bg:   rgba(29,78,216,0.15);
+      --blue-bd:   rgba(29,78,216,0.3);
+      --green:     #34d399;
+      --purple:    #a78bfa;
+      --orange:    #fb923c;
+      --pink:      #f472b6;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(2,6,23,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 72rem; margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 4rem;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 800; color: var(--white);
+      letter-spacing: 0.05em; cursor: pointer; text-decoration: none;
+    }
+    .logo span { color: var(--cyan); }
+    .nav-links { display: flex; gap: 0.25rem; }
+    .nav-links button {
+      background: none; border: none; cursor: pointer;
+      padding: 0.5rem 0.75rem; border-radius: 0.375rem;
+      font-size: 0.875rem; font-family: 'Inter', sans-serif;
+      color: var(--text-dim); transition: color 0.2s;
+    }
+    .nav-links button:hover { color: var(--white); }
+    .nav-links button.active { color: var(--cyan); font-weight: 600; }
+    @media (max-width: 640px) { .nav-links { display: none; } }
+
+    /* ── LAYOUT ── */
+    main { max-width: 72rem; margin: 0 auto; padding: 6rem 1.5rem 3rem; }
+    section { padding: 5rem 0; }
+    section + section { border-top: 1px solid rgba(30,41,59,0.5); }
+
+    /* ── HERO ── */
+    #home { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.25rem 0.75rem; border-radius: 9999px;
+      background: var(--cyan-bg); border: 1px solid var(--cyan-bd);
+      color: var(--cyan); font-size: 0.875rem; font-weight: 500;
+      margin-bottom: 1.5rem; width: max-content;
+    }
+    .badge svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 900; color: var(--white);
+      letter-spacing: -0.02em; line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--cyan-light), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-dim); max-width: 42rem;
+      line-height: 1.75; margin-bottom: 2.5rem;
+    }
+    .cta-group { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 3rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: 0.5rem;
+      font-size: 0.9375rem; font-weight: 600; text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+    .btn-primary { background: #0891b2; color: #fff; border: none; }
+    .btn-primary:hover { background: var(--cyan); }
+    .btn-secondary {
+      background: var(--bg-card); color: var(--white);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: #1e293b; }
+    .location {
+      display: flex; align-items: center; gap: 0.25rem;
+      color: var(--text-muted); font-size: 0.875rem;
+    }
+    .location svg { width: 1rem; height: 1rem; }
+
+    /* ── SECTION HEADINGS ── */
+    .section-title {
+      font-size: 1.875rem; font-weight: 800; color: var(--white);
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .section-title svg { width: 2rem; height: 2rem; color: var(--cyan); flex-shrink: 0; }
+
+    /* ── ABOUT ── */
+    .about-box {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 2.5rem;
+      font-size: 1.0625rem; line-height: 1.8;
+      transition: border-color 0.3s;
+    }
+    .about-box:hover { border-color: var(--cyan-bd); }
+    .about-box p + p { margin-top: 1rem; }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .skill-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .skill-card:hover { border-color: rgba(6,182,212,0.3); }
+    .skill-card-header {
+      display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;
+    }
+    .skill-icon {
+      padding: 0.5rem; background: var(--bg); border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .skill-icon svg { width: 1.25rem; height: 1.25rem; }
+    .skill-card h3 { font-size: 1rem; font-weight: 700; color: var(--white); }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      padding: 0.25rem 0.75rem; background: #1e293b;
+      color: var(--text); border: 1px solid var(--border);
+      border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500;
+    }
+
+    /* ── EXPERIENCE ── */
+    .timeline { display: flex; flex-direction: column; gap: 3rem; }
+    .job {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .job { grid-template-columns: 200px 1fr; align-items: start; }
+    }
+    .job-period-wrap {
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+    }
+    @media (min-width: 768px) {
+      .job-period-wrap { align-items: flex-end; padding-top: 0.25rem; }
+    }
+    .period-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem; border-radius: 9999px;
+      background: rgba(8,145,178,0.1); border: 1px solid rgba(8,145,178,0.25);
+      color: var(--cyan); font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .job-card {
+      background: rgba(15,23,42,0.4); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 1.75rem;
+      transition: border-color 0.3s;
+    }
+    .job-card:hover { border-color: rgba(6,182,212,0.3); }
+    .job-title { font-size: 1.125rem; font-weight: 700; color: var(--white); margin-bottom: 0.375rem; }
+    .job-meta {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem;
+      margin-bottom: 1rem; font-size: 0.9rem;
+    }
+    .job-company { color: var(--blue); font-weight: 600; }
+    .job-dot { color: var(--text-muted); }
+    .job-industry { color: var(--text-dim); }
+    .highlights { list-style: none; display: flex; flex-direction: column; gap: 0.625rem; }
+    .highlights li {
+      display: flex; align-items: flex-start; gap: 0.5rem;
+      font-size: 0.9375rem; color: var(--text); line-height: 1.65;
+    }
+    .highlights li svg { width: 1.125rem; height: 1.125rem; color: #0e7490; flex-shrink: 0; margin-top: 0.2rem; }
+
+    /* ── PROJECTS ── */
+    .project-card {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg));
+      border: 1px solid var(--border); border-radius: 1rem; padding: 0.25rem;
+    }
+    .project-inner { background: var(--bg-card); border-radius: 0.875rem; padding: 2rem; }
+    .project-header {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .project-title { font-size: 1.5rem; font-weight: 800; color: var(--white); }
+    .project-tag {
+      padding: 0.375rem 1rem; border-radius: 9999px;
+      background: var(--blue-bg); border: 1px solid var(--blue-bd);
+      color: var(--blue); font-size: 0.8125rem; font-weight: 700;
+    }
+    .project-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .project-list li { display: flex; align-items: flex-start; gap: 1rem; }
+    .dot {
+      width: 0.5rem; height: 0.5rem; border-radius: 9999px;
+      background: var(--cyan); flex-shrink: 0; margin-top: 0.5rem;
+    }
+    .project-list p { color: var(--text); line-height: 1.7; }
+
+    /* ── EDUCATION ── */
+    .edu-card {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 2rem;
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .edu-card:hover { border-color: rgba(6,182,212,0.3); }
+    .edu-card h3 { font-size: 1.125rem; font-weight: 700; color: var(--white); margin-bottom: 0.375rem; }
+    .edu-card p { color: var(--text-dim); }
+    .edu-year {
+      padding: 0.5rem 1rem; border-radius: 0.5rem;
+      background: rgba(8,145,178,0.1); border: 1px solid rgba(8,145,178,0.25);
+      color: var(--cyan); font-weight: 600; white-space: nowrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid #0f172a;
+      padding: 2.5rem 1.5rem;
+    }
+    .footer-inner {
+      max-width: 72rem; margin: 0 auto;
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 1rem;
+    }
+    footer p { font-size: 0.875rem; color: var(--text-muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      color: var(--text-muted); transition: color 0.2s;
+      display: flex; align-items: center;
+    }
+    .footer-links a:hover { color: var(--white); }
+    .footer-links svg { width: 1.25rem; height: 1.25rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#home">DNS<span>.</span></a>
+    <div class="nav-links">
+      <button onclick="scrollTo('home')"     id="nav-home">Home</button>
+      <button onclick="scrollTo('about')"    id="nav-about">About</button>
+      <button onclick="scrollTo('skills')"   id="nav-skills">Skills</button>
+      <button onclick="scrollTo('experience')" id="nav-experience">Experience</button>
+      <button onclick="scrollTo('projects')" id="nav-projects">Projects</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="badge fade-up">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      Backend Software Engineer
+    </div>
+    <h1 class="fade-up delay-1">
+      Hi, I'm <span class="gradient">Dwi Nanda.</span>
+    </h1>
+    <p class="hero-desc fade-up delay-2">
+      I design and build distributed systems that are efficient, resilient, and scalable. I focus on creating backend architectures that can gracefully handle real-world load.
+    </p>
+    <div class="cta-group fade-up delay-3">
+      <a href="mailto:dwnnd09@gmail.com" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Contact Me
+      </a>
+      <a href="https://github.com/dwinanda09" target="_blank" rel="noreferrer" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/dwi-nanda-3ba842103/" target="_blank" rel="noreferrer" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="location fade-up delay-4">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      Jakarta, Indonesia
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      About Me
+    </h2>
+    <div class="about-box">
+      <p>I'm a backend software engineer who thrives in designing and building distributed systems that are efficient, resilient, and scalable. I focus on creating backend architectures that can gracefully handle real-world load, with strong attention to service reliability, observability, and monitoring.</p>
+      <p>My approach emphasizes proactive mitigation planning and robust fallback strategies, ensuring systems can recover or roll back seamlessly when things go wrong. I'm driven to build solutions that not only perform at scale today but also remain adaptable and future-proof as products and teams continue to grow.</p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+      Technical Arsenal
+    </h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--cyan)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+          <h3>Languages</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">Go</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span><span class="tag">PHP</span><span class="tag">Python</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--blue)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <h3>Frameworks</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">Gin</span><span class="tag">Echo</span><span class="tag">Nest.JS</span><span class="tag">ExpressJS</span><span class="tag">Laravel</span><span class="tag">Django-rest</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--green)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+          <h3>Databases</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">PostgreSQL</span><span class="tag">MySQL</span><span class="tag">MongoDB</span><span class="tag">ArangoDB</span><span class="tag">Redis</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--purple)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+          <h3>Tools &amp; Platforms</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">GCP</span><span class="tag">AWS</span><span class="tag">GitHub Actions</span><span class="tag">New Relic</span><span class="tag">Datadog</span><span class="tag">Docker</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--orange)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <h3>Protocols &amp; Brokers</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">REST</span><span class="tag">gRPC</span><span class="tag">GraphQL</span><span class="tag">NSQ</span><span class="tag">RabbitMQ</span><span class="tag">Kafka</span><span class="tag">AWS SQS</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-header">
+          <div class="skill-icon"><svg style="color:var(--pink)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <h3>Prompt Engineering</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">Claude Code</span><span class="tag">gemini-cli</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Work Experience
+    </h2>
+    <div class="timeline">
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">Dec 2025 – Present</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer II</div>
+          <div class="job-meta">
+            <span class="job-company">PT. ARCHOR TEKNOLOGI DIGITAL (QOALA.ID)</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">Insure-tech</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Designed and scaled a multi-tenant onboarding platform for insurance operations.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Architected and implemented complex onboarding workflows for bank and insurance product data.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Built a high-throughput bulk policy ingestion system for bank partners integrated with Zurich Insurance Group.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Improved system security by introducing service-to-service authentication (Basic Auth) across internal microservices.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Collaborated with product, compliance, and business teams to translate regulatory requirements into scalable backend systems using Go (Golang).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">May 2024 – Oct 2025</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer Backend – Middle</div>
+          <div class="job-meta">
+            <span class="job-company">PT. PAKAR DIGITAL GLOBAL (PAPER.ID)</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">SaaS e-invoicing</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Bank Transfer Automation: Orchestrated integration using Zapier-based automation.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>AI-Driven Reconciliation (J&amp;T Cargo): Delivered an AI-enhanced transaction framework boosting accuracy by 60%.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>OCR Invoice System V1 &amp; V2: Spearheaded Paper's OCR pipeline handling 1,000+ daily emails with 99% success rate.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Dynamic Approval Workflow System: Engineered a configurable, multi-layer approval engine for AP workflows.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Operational Automation Suite: Automated cross-departmental administrative workflows.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">Mar 2024 – Apr 2024</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer Backend</div>
+          <div class="job-meta">
+            <span class="job-company">PT. SAYAKAYA LAHIR BATIN</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">Investment</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Redesigned the secure architecture of user login sessions to enhance protection.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Streamlined the back-office administrative workflow for financial reporting.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Optimized back-office API performance, reducing latency to an average response time of 0.5 seconds.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">May 2023 – Feb 2024</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer Backend – Middle</div>
+          <div class="job-meta">
+            <span class="job-company">PT. INDOPASIFIK TEKNOLOGI MEDIKA (LIFEPACK.ID)</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">Online Pharmacy</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Developed and maintained the OpenAPI for TetaShop's B2B services.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Implemented OTP order service integration using WhatsApp and Slack webhooks.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Optimized overall service response times, reducing latency from 30s to a maximum of 3s per request.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">Aug 2021 – Mar 2023</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer Backend</div>
+          <div class="job-meta">
+            <span class="job-company">PT. TOKOPEDIA</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">E-commerce</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Led digital product visibility initiatives in Digital Bills &amp; Top-Up.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Ensured a secure SDLC as a Security Champion within the Digital Growth team.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Developed and implemented load testing capabilities using Hammerflux and Hammertime.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Improved minimum code and test coverage to 98% for each repository.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job">
+        <div class="job-period-wrap"><span class="period-badge">Apr 2020 – Jul 2021</span></div>
+        <div class="job-card">
+          <div class="job-title">Software Engineer Backend</div>
+          <div class="job-meta">
+            <span class="job-company">PT. KATALISATOR ASA INDONESIA (TJETAK)</span>
+            <span class="job-dot">•</span>
+            <span class="job-industry">SaaS Digital Printing</span>
+          </div>
+          <ul class="highlights">
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Developed a robust pricing engine for the main marketplace service.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Conducted research, performed code refactoring, and improved market price performance by 60%.</li>
+            <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Designed and implemented core calculation libraries for Tjetak's three main product categories.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Notable Projects
+    </h2>
+    <div class="project-card">
+      <div class="project-inner">
+        <div class="project-header">
+          <div class="project-title">Biller Partner Integration</div>
+          <span class="project-tag">RTS.ID × TOKOPEDIA</span>
+        </div>
+        <ul class="project-list">
+          <li>
+            <div class="dot"></div>
+            <p>Led a key project integrating RTS.id with Tokopedia, streamlining Telkomsel's airtime biller partner aggregation to improve operational efficiency and service reliability.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Architected and developed a secure middleware solution to enable seamless communication between RTS.id and Tokopedia, ensuring smooth data exchange with encryption and decryption mechanisms, adhering to Tokopedia's complex security standards.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Released and maintained the integration solution, continuously optimizing transaction processing workflows, enhancing system performance, and improving overall transaction success rates.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section>
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Education
+    </h2>
+    <div class="edu-card">
+      <div>
+        <h3>Universitas Indonesia</h3>
+        <p>Sarjana Ilmu Komputer, Fakultas Ilmu Komputer</p>
+      </div>
+      <div class="edu-year">2015 – 2020 (Graduated)</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p>© <span id="year"></span> Dwi Nanda Susanto. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="https://github.com/dwinanda09" target="_blank" rel="noreferrer" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/dwi-nanda-3ba842103/" target="_blank" rel="noreferrer" title="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+      <a href="mailto:dwnnd09@gmail.com" title="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setActive(id);
+  }
+
+  function setActive(id) {
+    document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+    const el = document.getElementById('nav-' + id);
+    if (el) el.classList.add('active');
+  }
+
+  // Active nav on scroll
+  const sections = ['home','about','skills','experience','projects'];
+  window.addEventListener('scroll', () => {
+    const pos = window.scrollY + 120;
+    for (const id of sections) {
+      const el = document.getElementById(id);
+      if (el && pos >= el.offsetTop && pos < el.offsetTop + el.offsetHeight) {
+        setActive(id); break;
+      }
+    }
+  });
+
+  setActive('home');
+</script>
+</body>
+</html>
