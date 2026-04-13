@@ -7,7 +7,7 @@
   <meta name="description" content="Portfolio of Dwi Nanda Susanto — Backend Software Engineer specializing in distributed systems, Go, and scalable backend architectures." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -285,6 +285,175 @@
     .delay-2 { animation-delay: 0.2s; }
     .delay-3 { animation-delay: 0.3s; }
     .delay-4 { animation-delay: 0.4s; }
+
+  /* ══════════════════════════════════════════════
+     SLIDE DECK OVERLAY — all styles scoped to
+     #sdeck-modal to avoid portfolio conflicts
+  ══════════════════════════════════════════════ */
+  #sdeck-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: #020617; align-items: center; justify-content: center;
+  }
+  #sdeck-modal.open { display: flex; }
+
+  /* stage: 16:9 letterbox, vmin-based font scale */
+  #sdeck-modal .stage {
+    position: relative;
+    width:  min(100vw, calc(100vh * 4 / 3));
+    height: min(100vh, calc(100vw *  3 / 4));
+    font-size: 2.4vmin;
+    overflow: hidden;
+    background: #020617;
+    /* slide-local tokens */
+    --bg:#020617; --card:#0f172a; --border:#1e293b; --text:#cbd5e1;
+    --dim:#64748b; --muted:#475569; --white:#f8fafc;
+    --cyan:#06b6d4; --cyanL:#67e8f9; --cyanD:#0e7490;
+    --cyanBg:rgba(8,145,178,.12); --cyanBd:rgba(8,145,178,.3);
+    --blue:#60a5fa; --blueBg:rgba(29,78,216,.12); --blueBd:rgba(29,78,216,.3);
+    --green:#34d399; --greenBg:rgba(52,211,153,.08); --greenBd:rgba(52,211,153,.28);
+    --orange:#fb923c; --orangeBg:rgba(251,146,60,.08); --orangeBd:rgba(251,146,60,.28);
+    --purple:#a78bfa; --purpleBg:rgba(167,139,250,.08); --purpleBd:rgba(167,139,250,.28);
+    --red:#f87171; --redBg:rgba(248,113,113,.08); --redBd:rgba(248,113,113,.28);
+  }
+  #sdeck-modal .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5.5% 7%;
+    opacity: 0; pointer-events: none;
+    transition: opacity .28s ease;
+    color: var(--text); font-family: 'Inter', sans-serif;
+  }
+  #sdeck-modal .slide.active { opacity: 1; pointer-events: auto; }
+
+  /* typography — scoped to avoid portfolio h1/h2/p/li conflicts */
+  #sdeck-modal h1 { font-size: 2.9em; font-weight: 900; color: var(--white); letter-spacing: -.03em; line-height: 1.05; margin-bottom: 0; background: none; -webkit-background-clip: unset; -webkit-text-fill-color: unset; background-clip: unset; }
+  #sdeck-modal h2 { font-size: 1.7em; font-weight: 800; color: var(--white); letter-spacing: -.02em; line-height: 1.15; margin-bottom: 0; }
+  #sdeck-modal p  { font-size: .75em; line-height: 1.75; margin: 0; }
+  #sdeck-modal li { font-size: .72em; line-height: 1.65; }
+  #sdeck-modal .slide-label { font-size: .62em; font-weight: 700; color: var(--cyan); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .45em; }
+  #sdeck-modal .divider { width: 2.8em; height: 3px; background: linear-gradient(90deg,var(--cyan),transparent); border-radius: 99px; margin: .6em 0 .9em; }
+
+  /* layout */
+  #sdeck-modal .row { display: flex; gap: 1em; width: 100%; }
+  #sdeck-modal .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .55em; }
+  #sdeck-modal .mt  { margin-top: .6em; }
+  #sdeck-modal .mt2 { margin-top: 1.1em; }
+
+  /* card */
+  #sdeck-modal .card { background: var(--card); border: 1px solid var(--border); border-radius: .6em; padding: .8em 1em; }
+  #sdeck-modal .card-cyan   { background: var(--cyanBg);   border-color: var(--cyanBd); }
+  #sdeck-modal .card-blue   { background: var(--blueBg);   border-color: var(--blueBd); }
+  #sdeck-modal .card-green  { background: var(--greenBg);  border-color: var(--greenBd); }
+  #sdeck-modal .card-orange { background: var(--orangeBg); border-color: var(--orangeBd); }
+  #sdeck-modal .card-purple { background: var(--purpleBg); border-color: var(--purpleBd); }
+  #sdeck-modal .card-red    { background: var(--redBg);    border-color: var(--redBd); }
+
+  /* color utils */
+  #sdeck-modal .c-cyan   { color: var(--cyan); }
+  #sdeck-modal .c-blue   { color: var(--blue); }
+  #sdeck-modal .c-green  { color: var(--green); }
+  #sdeck-modal .c-orange { color: var(--orange); }
+  #sdeck-modal .c-purple { color: var(--purple); }
+  #sdeck-modal .c-red    { color: var(--red); }
+  #sdeck-modal .c-white  { color: var(--white); }
+  #sdeck-modal .c-dim    { color: var(--dim); }
+
+  /* pill */
+  #sdeck-modal .pill { display: inline-block; font-size: .5em; font-weight: 700; padding: .2em .7em; border-radius: 99px; letter-spacing: .06em; text-transform: uppercase; }
+  #sdeck-modal .pill-cyan   { background: var(--cyanBg);   color: var(--cyan);   border: 1px solid var(--cyanBd); }
+  #sdeck-modal .pill-blue   { background: var(--blueBg);   color: var(--blue);   border: 1px solid var(--blueBd); }
+  #sdeck-modal .pill-green  { background: var(--greenBg);  color: var(--green);  border: 1px solid var(--greenBd); }
+  #sdeck-modal .pill-purple { background: var(--purpleBg); color: var(--purple); border: 1px solid var(--purpleBd); }
+
+  /* feature row */
+  #sdeck-modal .feat { display: flex; align-items: flex-start; gap: .7em; margin-bottom: .5em; }
+  #sdeck-modal .feat-icon  { font-size: .75em; flex-shrink: 0; margin-top: .1em; }
+  #sdeck-modal .feat-title { font-size: .65em; font-weight: 700; color: var(--white); margin-bottom: .1em; }
+  #sdeck-modal .feat-desc  { font-size: .58em; color: var(--text); line-height: 1.55; }
+
+  /* checklist */
+  #sdeck-modal .checks { list-style: none; margin: 0; padding: 0; }
+  #sdeck-modal .checks li { font-size: .65em; display: flex; align-items: flex-start; gap: .45em; padding: .22em 0; line-height: 1.55; }
+  #sdeck-modal .checks li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  #sdeck-modal .checks li.no::before   { content: '✗'; color: var(--red); }
+  #sdeck-modal .checks li.warn::before { content: '⚡'; color: var(--orange); }
+
+  /* bar chart */
+  #sdeck-modal .bar-group     { display: flex; flex-direction: column; gap: .45em; margin-top: .4em; }
+  #sdeck-modal .bar-label-row { font-size: .58em; font-weight: 700; color: var(--white); margin-bottom: .15em; }
+  #sdeck-modal .bar-row   { display: flex; align-items: center; gap: .6em; }
+  #sdeck-modal .bar-name  { font-size: .55em; min-width: 3em; color: var(--text); }
+  #sdeck-modal .bar-track { flex: 1; height: 1.1em; background: var(--card); border-radius: 99px; overflow: hidden; }
+  #sdeck-modal .bar-fill  { height: 100%; border-radius: 99px; }
+  #sdeck-modal .bar-val   { font-size: .52em; font-weight: 700; min-width: 3.5em; text-align: right; }
+
+  /* code block */
+  #sdeck-modal .code { font-family: 'JetBrains Mono', monospace; font-size: .55em; line-height: 1.75; background: #060d1f; border: 1px solid var(--border); border-radius: .55em; padding: .75em .9em; color: var(--text); overflow: auto; width: 100%; box-sizing: border-box; flex: 1; white-space: pre; }
+  #sdeck-modal .kw  { color: var(--purple); }
+  #sdeck-modal .fn  { color: var(--cyan); }
+  #sdeck-modal .str { color: var(--green); }
+  #sdeck-modal .num { color: var(--orange); }
+  #sdeck-modal .cmt { color: var(--dim); font-style: italic; }
+  #sdeck-modal .key { color: var(--blue); }
+
+  /* VS badge */
+  #sdeck-modal .vs { width: 2.2em; height: 2.2em; border-radius: 50%; background: #1e293b; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .6em; font-weight: 900; color: var(--dim); flex-shrink: 0; align-self: center; }
+
+  /* comparison table */
+  #sdeck-modal .ctable { width: 100%; border-collapse: collapse; font-size: .6em; margin-top: .6em; }
+  #sdeck-modal .ctable th { padding: .4em .75em; background: var(--card); color: var(--cyan); font-weight: 700; border-bottom: 1px solid var(--border); text-align: left; }
+  #sdeck-modal .ctable td { padding: .42em .75em; border-bottom: 1px solid rgba(30,41,59,.45); color: var(--text); vertical-align: top; }
+  #sdeck-modal .ctable tr:last-child td { border-bottom: none; }
+  #sdeck-modal .ctable .w { color: var(--green); font-weight: 600; }
+  #sdeck-modal .ctable .l { color: var(--red); }
+  #sdeck-modal .ctable .m { color: var(--orange); }
+
+  /* timeline */
+  #sdeck-modal .tl { border-left: 2px solid var(--border); padding-left: 1em; display: flex; flex-direction: column; gap: .55em; }
+  #sdeck-modal .tl-item { position: relative; }
+  #sdeck-modal .tl-item::before { content: ''; position: absolute; left: -1.3em; top: .3em; width: .5em; height: .5em; border-radius: 50%; background: var(--cyan); border: 2px solid #020617; }
+  #sdeck-modal .tl-year { font-size: .5em; color: var(--cyan); font-weight: 700; }
+  #sdeck-modal .tl-text { font-size: .6em; color: var(--text); line-height: 1.5; }
+
+  /* big stat */
+  #sdeck-modal .bignum  { font-size: 3em; font-weight: 900; letter-spacing: -.05em; line-height: 1; }
+  #sdeck-modal .bignote { font-size: .52em; color: var(--dim); margin-top: .2em; }
+
+  /* decision flow */
+  #sdeck-modal .flow-item { font-size: .6em; padding: .55em .85em; background: var(--card); border: 1px solid var(--border); border-radius: .5em; line-height: 1.6; }
+  #sdeck-modal .flow-item strong { color: var(--white); }
+
+  /* chrome: nav arrows, counter, progress, close btn */
+  .sdeck-nav {
+    position: fixed; top: 50%; transform: translateY(-50%); z-index: 201;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    color: #64748b; width: 2.4rem; height: 2.4rem;
+    border-radius: .4rem; cursor: pointer; font-size: 1rem;
+    display: none; align-items: center; justify-content: center;
+    transition: color .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  #sdeck-modal.open ~ .sdeck-nav,
+  .sdeck-nav.visible { display: flex; }
+  .sdeck-nav:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
+  #sdeck-prev { left: .6rem; }
+  #sdeck-next { right: .6rem; }
+  .sdeck-close-btn {
+    position: fixed; top: .7rem; left: .9rem; z-index: 201;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    color: #64748b; padding: .35rem .75rem; border-radius: .4rem;
+    cursor: pointer; font-size: .72rem; font-family: 'Inter', sans-serif;
+    display: none; align-items: center; gap: .3rem;
+    transition: color .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  .sdeck-close-btn.visible { display: flex; }
+  .sdeck-close-btn:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
+  .sdeck-counter { position: fixed; bottom: .8rem; right: 1rem; z-index: 201; font-size: .72rem; color: #64748b; font-family: 'Inter', sans-serif; display: none; }
+  .sdeck-counter.visible { display: block; }
+  .sdeck-progress { position: fixed; bottom: 0; left: 0; right: 0; z-index: 201; height: 3px; background: rgba(30,41,59,.6); display: none; }
+  .sdeck-progress.visible { display: block; }
+  .sdeck-progress-fill { height: 100%; background: linear-gradient(90deg,#06b6d4,#0e7490); transition: width .3s ease; }
+  .sdeck-hint { position: fixed; bottom: .9rem; left: 50%; transform: translateX(-50%); z-index: 201; font-size: .62rem; color: #475569; font-family: 'Inter', sans-serif; pointer-events: none; display: none; }
+  .sdeck-hint.visible { display: block; }
   </style>
 </head>
 <body>
@@ -298,7 +467,8 @@
       <button onclick="scrollTo('about')"    id="nav-about">About</button>
       <button onclick="scrollTo('skills')"   id="nav-skills">Skills</button>
       <button onclick="scrollTo('experience')" id="nav-experience">Experience</button>
-      <button onclick="scrollTo('projects')" id="nav-projects">Projects</button>
+      <button onclick="scrollTo('projects')"    id="nav-projects">Projects</button>
+      <button onclick="scrollTo('talks')"       id="nav-talks">Talks</button>
     </div>
   </div>
 </nav>
@@ -561,6 +731,39 @@
     </div>
   </section>
 
+  <!-- TALKS -->
+  <section id="talks">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Talks &amp; Slides
+    </h2>
+    <a href="#" onclick="event.preventDefault();openSlides()" class="project-card" style="display:block;text-decoration:none;cursor:pointer;">
+      <div class="project-inner" style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+            <span style="padding:0.25rem 0.75rem;border-radius:9999px;background:var(--cyan-bg);border:1px solid var(--cyan-bd);color:var(--cyan);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">Performance</span>
+            <span style="padding:0.25rem 0.75rem;border-radius:9999px;background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">Backend</span>
+          </div>
+          <div class="project-title" style="margin-bottom:0.5rem;">gRPC vs REST — Performance Deep Dive</div>
+          <p style="color:var(--text-dim);font-size:0.9375rem;line-height:1.7;max-width:42rem;">
+            A 15-minute talk covering how gRPC and REST differ under the hood — binary vs JSON serialization, HTTP/2 multiplexing, streaming modes, and a practical decision guide. Designed for both beginners and engineers.
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;">
+            <span class="tag">gRPC</span>
+            <span class="tag">REST</span>
+            <span class="tag">Protocol Buffers</span>
+            <span class="tag">HTTP/2</span>
+            <span class="tag">Benchmarks</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;color:var(--cyan);font-size:0.9rem;font-weight:600;white-space:nowrap;padding-top:0.25rem;">
+          View Slides
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+  </section>
+
   <!-- EDUCATION -->
   <section>
     <h2 class="section-title">
@@ -596,6 +799,478 @@
   </div>
 </footer>
 
+<!-- ══════════════════════════════════════════════
+     SLIDE DECK MODAL
+══════════════════════════════════════════════ -->
+<div id="sdeck-modal">
+  <div class="stage">
+
+    <!-- 01 · TITLE -->
+    <div class="slide active">
+      <div class="slide-label">Performance Talk · 2025</div>
+      <h1>gRPC <span class="c-dim">vs</span><br/><span class="c-cyan">REST</span></h1>
+      <div class="divider"></div>
+      <p style="max-width:28em;color:var(--dim);">Which one is faster? When should you care?<br/>A practical deep-dive for everyone.</p>
+      <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+        <span class="pill pill-cyan">Performance</span>
+        <span class="pill pill-green">Backend</span>
+        <span class="pill pill-purple">APIs</span>
+      </div>
+      <p class="mt2" style="font-size:.58em;color:var(--muted);">Dwi Nanda Susanto · Backend Software Engineer</p>
+    </div>
+
+    <!-- 02 · AGENDA -->
+    <div class="slide">
+      <div class="slide-label">What we'll cover today</div>
+      <h2>Agenda</h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col">
+          <div class="card">
+            <div class="feat"><div class="feat-icon">🌐</div><div><div class="feat-title">1. What is REST?</div><div class="feat-desc">Quick refresher on how REST works</div></div></div>
+            <div class="feat"><div class="feat-icon">⚡</div><div><div class="feat-title">2. What is gRPC?</div><div class="feat-desc">Google's modern take on remote calls</div></div></div>
+            <div class="feat"><div class="feat-icon">🔬</div><div><div class="feat-title">3. Under the Hood</div><div class="feat-desc">Why they perform differently</div></div></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="feat"><div class="feat-icon">📊</div><div><div class="feat-title">4. Benchmarks</div><div class="feat-desc">Real numbers, real comparisons</div></div></div>
+            <div class="feat"><div class="feat-icon">🗺️</div><div><div class="feat-title">5. When to use which</div><div class="feat-desc">Practical decision guide</div></div></div>
+            <div class="feat"><div class="feat-icon">💬</div><div><div class="feat-title">6. Q&amp;A</div><div class="feat-desc">~3 minutes, ask anything</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 · WHAT IS REST -->
+    <div class="slide">
+      <div class="slide-label">The classic approach</div>
+      <h2>What is <span class="c-cyan">REST</span>?</h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col" style="flex:1.15;">
+          <p>
+            <strong class="c-white">REST</strong> (Representational State Transfer) is an architectural style for APIs.
+            Think of it like <span class="c-cyan">ordering food at a restaurant</span> — you say
+            what you want in plain language and get a response back.
+          </p>
+          <ul class="checks mt">
+            <li>Uses HTTP/1.1 verbs: GET, POST, PUT, DELETE</li>
+            <li>Data in <span class="c-orange">JSON</span> — human-readable text</li>
+            <li>Stateless — each request is independent</li>
+            <li>Works everywhere: any language, any browser</li>
+          </ul>
+          <div class="card card-blue mt2" style="font-size:.58em;">
+            <strong class="c-blue">🌍 Used by:</strong> Twitter API, GitHub API, Stripe, almost every public API you've seen
+          </div>
+        </div>
+        <div class="col">
+          <div class="code"><span class="cmt"># GET a user — REST style</span>
+<span class="kw">GET</span> /users/<span class="num">42</span>
+<span class="key">Accept</span>: application/json
+
+<span class="cmt"># Response (JSON)</span>
+{
+  <span class="str">"id"</span>: <span class="num">42</span>,
+  <span class="str">"name"</span>: <span class="str">"Dwi Nanda"</span>,
+  <span class="str">"role"</span>: <span class="str">"engineer"</span>
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 · WHAT IS gRPC -->
+    <div class="slide">
+      <div class="slide-label">Google's answer to fast communication</div>
+      <h2>What is <span class="c-cyan">gRPC</span>?</h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col" style="flex:1.15;">
+          <p>
+            <strong class="c-white">gRPC</strong> lets your code
+            <span class="c-cyan">call a function on another machine</span> as if it were local.
+            Like calling a friend directly by phone, not via email.
+          </p>
+          <div class="tl mt">
+            <div class="tl-item"><div class="tl-year">2015</div><div class="tl-text">Open-sourced by Google</div></div>
+            <div class="tl-item"><div class="tl-year">Protocol</div><div class="tl-text">Built on <span class="c-cyan">HTTP/2</span> — multiplexed, binary frames</div></div>
+            <div class="tl-item"><div class="tl-year">Format</div><div class="tl-text"><span class="c-cyan">Protocol Buffers</span> — binary serialization</div></div>
+            <div class="tl-item"><div class="tl-year">Schema</div><div class="tl-text">Strongly typed <code style="font-size:.9em;">.proto</code> contract file</div></div>
+          </div>
+          <div class="card card-cyan mt" style="font-size:.58em;">
+            <strong class="c-cyan">⚡ Used by:</strong> Google internal services, Netflix, Dropbox, Slack microservices
+          </div>
+        </div>
+        <div class="col">
+          <div class="code"><span class="cmt">// user.proto definition</span>
+<span class="kw">service</span> <span class="fn">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="key">UserRequest</span>)
+      <span class="kw">returns</span> (<span class="key">UserResponse</span>);
+}
+
+<span class="kw">message</span> <span class="fn">UserRequest</span> {
+  <span class="key">int32</span> id = <span class="num">1</span>;
+}
+
+<span class="kw">message</span> <span class="fn">UserResponse</span> {
+  <span class="key">int32</span>  id   = <span class="num">1</span>;
+  <span class="key">string</span> name = <span class="num">2</span>;
+  <span class="key">string</span> role = <span class="num">3</span>;
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 · WHY PERF DIFFERS -->
+    <div class="slide">
+      <div class="slide-label">Under the hood</div>
+      <h2>Why they <span class="c-cyan">perform differently</span></h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col">
+          <div class="card card-blue" style="height:100%;">
+            <div style="font-size:.7em;font-weight:700;color:var(--blue);margin-bottom:.6em;">🌐 REST</div>
+            <div class="feat"><div class="feat-icon">📄</div><div><div class="feat-title" style="color:var(--blue);">JSON text</div><div class="feat-desc"><code>"name"</code> = 6 bytes just for the key. Text is verbose.</div></div></div>
+            <div class="feat"><div class="feat-icon">🔌</div><div><div class="feat-title" style="color:var(--blue);">HTTP/1.1</div><div class="feat-desc">One request per connection. Head-of-line blocking.</div></div></div>
+            <div class="feat"><div class="feat-icon">⚙️</div><div><div class="feat-title" style="color:var(--blue);">Parse overhead</div><div class="feat-desc">CPU must parse text → object on every call.</div></div></div>
+          </div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="col">
+          <div class="card card-cyan" style="height:100%;">
+            <div style="font-size:.7em;font-weight:700;color:var(--cyan);margin-bottom:.6em;">⚡ gRPC</div>
+            <div class="feat"><div class="feat-icon">📦</div><div><div class="feat-title">Protobuf binary</div><div class="feat-desc">Field <code>1</code> = 1 byte. Compact and typed by design.</div></div></div>
+            <div class="feat"><div class="feat-icon">🔀</div><div><div class="feat-title">HTTP/2</div><div class="feat-desc">Multiplexed streams — many requests, one connection.</div></div></div>
+            <div class="feat"><div class="feat-icon">🚀</div><div><div class="feat-title">Less parse overhead</div><div class="feat-desc">Binary decode is 5–10× faster than JSON parsing.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 · PAYLOAD SIZE -->
+    <div class="slide">
+      <div class="slide-label">The data diet</div>
+      <h2>Payload <span class="c-cyan">Size</span> Difference</h2>
+      <div class="divider"></div>
+      <p style="font-size:.62em;">Same user object serialized in both formats:</p>
+      <div class="row mt">
+        <div class="col">
+          <div class="code"><span class="cmt">// JSON (REST) — 89 bytes</span>
+{
+  <span class="str">"id"</span>: <span class="num">42</span>,
+  <span class="str">"name"</span>: <span class="str">"Dwi Nanda"</span>,
+  <span class="str">"role"</span>: <span class="str">"engineer"</span>,
+  <span class="str">"active"</span>: <span class="kw">true</span>
+}</div>
+          <div class="card card-blue mt" style="text-align:center;">
+            <div class="bignum c-blue">89</div>
+            <div class="bignote">bytes (JSON)</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="code"><span class="cmt">// Protobuf (gRPC) — ~22 bytes</span>
+<span class="cmt">// Binary, not human-readable</span>
+<span class="num">08 2A</span>            <span class="cmt">// id = 42</span>
+<span class="num">12 09</span> <span class="str">44 77 69 ...</span>  <span class="cmt">// name</span>
+<span class="num">1A 08</span> <span class="str">65 6E 67 ...</span>  <span class="cmt">// role</span>
+<span class="num">20 01</span>            <span class="cmt">// active = true</span></div>
+          <div class="card card-cyan mt" style="text-align:center;">
+            <div class="bignum c-cyan">~22</div>
+            <div class="bignote">bytes (Protobuf)</div>
+          </div>
+        </div>
+      </div>
+      <div class="card card-green mt" style="font-size:.6em;">
+        💡 <strong class="c-green">~75% smaller payload</strong> — less bandwidth, faster transfers, lower cloud costs at scale.
+      </div>
+    </div>
+
+    <!-- 07 · BENCHMARKS -->
+    <div class="slide">
+      <div class="slide-label">Real numbers</div>
+      <h2>Performance <span class="c-cyan">Benchmarks</span></h2>
+      <div class="divider"></div>
+      <p style="font-size:.58em;color:var(--dim);">Typical benchmark · 1000 req/s · same service · Go server</p>
+      <div class="row mt">
+        <div class="col">
+          <div class="bar-group">
+            <div class="bar-label-row">Throughput (req/sec) — higher is better</div>
+            <div class="bar-row">
+              <div class="bar-name">gRPC</div>
+              <div class="bar-track"><div class="bar-fill" style="width:90%;background:linear-gradient(90deg,var(--cyan),var(--cyanD));"></div></div>
+              <div class="bar-val c-cyan">~25k</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-name">REST</div>
+              <div class="bar-track"><div class="bar-fill" style="width:44%;background:linear-gradient(90deg,var(--blue),#1d4ed8);"></div></div>
+              <div class="bar-val c-blue">~11k</div>
+            </div>
+          </div>
+          <div class="bar-group mt">
+            <div class="bar-label-row">Latency (ms) — lower is better</div>
+            <div class="bar-row">
+              <div class="bar-name">gRPC</div>
+              <div class="bar-track"><div class="bar-fill" style="width:20%;background:linear-gradient(90deg,var(--cyan),var(--cyanD));"></div></div>
+              <div class="bar-val c-cyan">~1.2ms</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-name">REST</div>
+              <div class="bar-track"><div class="bar-fill" style="width:60%;background:linear-gradient(90deg,var(--blue),#1d4ed8);"></div></div>
+              <div class="bar-val c-blue">~4.8ms</div>
+            </div>
+          </div>
+          <div class="bar-group mt">
+            <div class="bar-label-row">CPU usage (%) — lower is better</div>
+            <div class="bar-row">
+              <div class="bar-name">gRPC</div>
+              <div class="bar-track"><div class="bar-fill" style="width:28%;background:linear-gradient(90deg,var(--cyan),var(--cyanD));"></div></div>
+              <div class="bar-val c-cyan">~28%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-name">REST</div>
+              <div class="bar-track"><div class="bar-fill" style="width:55%;background:linear-gradient(90deg,var(--blue),#1d4ed8);"></div></div>
+              <div class="bar-val c-blue">~55%</div>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="flex:.55;justify-content:center;">
+          <div class="card card-cyan" style="text-align:center;padding:1.2em;">
+            <div class="bignum c-cyan">7×</div>
+            <div class="bignote">higher throughput</div>
+          </div>
+          <div class="card card-blue mt" style="text-align:center;padding:1.2em;">
+            <div class="bignum c-blue">4×</div>
+            <div class="bignote">lower latency</div>
+          </div>
+          <div class="card card-orange mt" style="font-size:.52em;">
+            ⚠️ Numbers vary by payload size, hardware &amp; impl. Order-of-magnitude comparisons.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 · STREAMING -->
+    <div class="slide">
+      <div class="slide-label">The hidden superpower</div>
+      <h2>gRPC <span class="c-cyan">Streaming</span></h2>
+      <div class="divider"></div>
+      <p style="font-size:.65em;">gRPC supports <strong class="c-white">4 communication patterns</strong>. REST only supports 1.</p>
+      <div class="row mt">
+        <div class="col">
+          <div class="card mt" style="font-size:.62em;">
+            <strong class="c-white">1. Unary</strong> <span class="c-dim" style="font-size:.85em;">— like REST</span><br/>
+            <span style="color:var(--dim);">One request → one response. Simple.</span>
+          </div>
+          <div class="card card-cyan mt" style="font-size:.62em;">
+            <strong class="c-cyan">2. Server Streaming</strong><br/>
+            <span style="color:var(--dim);">Client sends once, server streams back data.</span><br/>
+            <span class="c-green" style="font-size:.9em;">Example: live stock prices, log tailing</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card card-blue mt" style="font-size:.62em;">
+            <strong class="c-blue">3. Client Streaming</strong><br/>
+            <span style="color:var(--dim);">Client streams data, server replies once.</span><br/>
+            <span class="c-blue" style="font-size:.9em;">Example: file upload, sensor telemetry</span>
+          </div>
+          <div class="card card-purple mt" style="font-size:.62em;">
+            <strong class="c-purple">4. Bidirectional Streaming</strong><br/>
+            <span style="color:var(--dim);">Both sides stream simultaneously. Real-time!</span><br/>
+            <span class="c-purple" style="font-size:.9em;">Example: chat app, multiplayer game sync</span>
+          </div>
+        </div>
+      </div>
+      <div class="card card-green mt" style="font-size:.58em;">
+        💡 REST can fake streaming with SSE or WebSockets — but it's bolted on. gRPC streaming is <strong class="c-green">native and first-class</strong>.
+      </div>
+    </div>
+
+    <!-- 09 · COMPARISON TABLE -->
+    <div class="slide">
+      <div class="slide-label">Side by side</div>
+      <h2>Full <span class="c-cyan">Comparison</span></h2>
+      <div class="divider"></div>
+      <table class="ctable">
+        <thead>
+          <tr><th>Aspect</th><th>REST</th><th>gRPC</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong class="c-white">Protocol</strong></td>    <td>HTTP/1.1</td>              <td class="w">HTTP/2</td></tr>
+          <tr><td><strong class="c-white">Data format</strong></td> <td>JSON (text)</td>            <td class="w">Protobuf (binary)</td></tr>
+          <tr><td><strong class="c-white">Payload size</strong></td><td class="l">Larger (verbose)</td><td class="w">~75% smaller</td></tr>
+          <tr><td><strong class="c-white">Latency</strong></td>     <td class="l">Higher</td>       <td class="w">Lower (~4×)</td></tr>
+          <tr><td><strong class="c-white">Throughput</strong></td>  <td class="l">Lower</td>        <td class="w">Higher (~7×)</td></tr>
+          <tr><td><strong class="c-white">Streaming</strong></td>   <td class="m">Manual (SSE/WS)</td><td class="w">Native (4 modes)</td></tr>
+          <tr><td><strong class="c-white">Browser support</strong></td><td class="w">Universal</td> <td class="l">Needs grpc-web</td></tr>
+          <tr><td><strong class="c-white">Human-readable</strong></td><td class="w">Yes (JSON)</td> <td class="l">No (binary)</td></tr>
+          <tr><td><strong class="c-white">Code generation</strong></td><td class="m">Optional</td>  <td class="w">Built-in (protoc)</td></tr>
+          <tr><td><strong class="c-white">Learning curve</strong></td><td class="w">Easy</td>        <td class="m">Moderate</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 10 · WHEN gRPC -->
+    <div class="slide">
+      <div class="slide-label">Use case guide</div>
+      <h2>When to pick <span class="c-cyan">gRPC</span></h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col">
+          <ul class="checks">
+            <li>Internal microservice-to-microservice calls</li>
+            <li>High-throughput, low-latency requirements</li>
+            <li>Real-time bidirectional streaming</li>
+            <li>Mobile clients on slow/metered connections</li>
+            <li>Polyglot environments needing strong contracts</li>
+          </ul>
+          <div class="card card-cyan mt2" style="font-size:.6em;">
+            <strong class="c-cyan">Real example:</strong><br/>
+            Netflix uses gRPC for 1,000+ internal services communicating millions of times per second.
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mt" style="height:100%;">
+            <div class="feat"><div class="feat-icon">🏭</div><div><div class="feat-title">Microservices</div><div class="feat-desc">Services calling each other thousands of times/sec</div></div></div>
+            <div class="feat"><div class="feat-icon">📡</div><div><div class="feat-title">Streaming data</div><div class="feat-desc">IoT telemetry, live dashboards, chat</div></div></div>
+            <div class="feat"><div class="feat-icon">📱</div><div><div class="feat-title">Mobile backends</div><div class="feat-desc">Smaller payloads = faster on 4G</div></div></div>
+            <div class="feat"><div class="feat-icon">🔒</div><div><div class="feat-title">Strong contracts</div><div class="feat-desc">Protobuf enforces schema — no surprises</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 · WHEN REST -->
+    <div class="slide">
+      <div class="slide-label">Use case guide</div>
+      <h2>When to pick <span class="c-blue">REST</span></h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col">
+          <ul class="checks">
+            <li>Public-facing APIs consumed by third parties</li>
+            <li>Browser-based frontends (SPA, SSR)</li>
+            <li>Simple CRUD services with low traffic</li>
+            <li>Teams new to backend APIs</li>
+            <li>When debuggability &amp; curl-ability matters</li>
+          </ul>
+          <div class="card card-blue mt2" style="font-size:.6em;">
+            <strong class="c-blue">Real example:</strong><br/>
+            Stripe, GitHub, Twilio — all public REST APIs. Explore them directly in Postman or the browser.
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mt" style="height:100%;">
+            <div class="feat"><div class="feat-icon">🌍</div><div><div class="feat-title">Public APIs</div><div class="feat-desc">Developers integrate without special tooling</div></div></div>
+            <div class="feat"><div class="feat-icon">🖥️</div><div><div class="feat-title">Web frontends</div><div class="feat-desc"><code>fetch()</code> in the browser just works</div></div></div>
+            <div class="feat"><div class="feat-icon">🐣</div><div><div class="feat-title">Small teams / MVPs</div><div class="feat-desc">Faster to ship, easier to onboard</div></div></div>
+            <div class="feat"><div class="feat-icon">🔍</div><div><div class="feat-title">Debuggability</div><div class="feat-desc">JSON is readable — inspect with any tool</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 · DECISION FLOWCHART -->
+    <div class="slide">
+      <div class="slide-label">Quick guide</div>
+      <h2>Decision <span class="c-cyan">Flowchart</span></h2>
+      <div class="divider"></div>
+      <div style="display:flex;flex-direction:column;gap:.55em;margin-top:.8em;">
+        <div class="flow-item">
+          <strong>Is this a public API (consumed by external developers)?</strong><br/>
+          <span class="c-green">→ Yes:</span> <strong class="c-blue">Use REST</strong> &nbsp;|&nbsp;
+          <span class="c-dim">→ No: continue ↓</span>
+        </div>
+        <div class="flow-item">
+          <strong>Do you need real-time streaming (chat, live data, telemetry)?</strong><br/>
+          <span class="c-green">→ Yes:</span> <strong class="c-cyan">Use gRPC</strong> &nbsp;|&nbsp;
+          <span class="c-dim">→ No: continue ↓</span>
+        </div>
+        <div class="flow-item">
+          <strong>Is this internal service-to-service at high volume?</strong><br/>
+          <span class="c-green">→ Yes:</span> <strong class="c-cyan">Use gRPC</strong> &nbsp;|&nbsp;
+          <span class="c-dim">→ No: continue ↓</span>
+        </div>
+        <div class="flow-item">
+          <strong>Is debugging ease more important than raw performance?</strong><br/>
+          <span class="c-green">→ Yes:</span> <strong class="c-blue">Use REST</strong> &nbsp;|&nbsp;
+          <span class="c-cyan">→ No:</span> <strong class="c-cyan">gRPC is fine</strong>
+        </div>
+        <div class="card card-green" style="font-size:.6em;">
+          <strong class="c-green">When in doubt?</strong> Start with REST. Migrate hot paths to gRPC when performance actually becomes a problem. Don't premature-optimize!
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 · KEY TAKEAWAYS -->
+    <div class="slide">
+      <div class="slide-label">The short version</div>
+      <h2>Key <span class="c-cyan">Takeaways</span></h2>
+      <div class="divider"></div>
+      <div class="row mt">
+        <div class="col" style="flex:.65;gap:.6em;">
+          <div class="card card-cyan" style="text-align:center;padding:1em;">
+            <div class="bignum c-cyan">7×</div>
+            <div class="bignote">faster throughput (internal)</div>
+          </div>
+          <div class="card card-green" style="text-align:center;padding:1em;">
+            <div class="bignum c-green">75%</div>
+            <div class="bignote">smaller payloads</div>
+          </div>
+          <div class="card card-purple" style="font-size:.58em;padding:.7em .85em;">
+            <strong class="c-purple">The real answer:</strong> "It depends" — but now you know exactly what it depends on.
+          </div>
+        </div>
+        <div class="col">
+          <ul class="checks mt">
+            <li>gRPC is faster: <span class="c-cyan">HTTP/2 + binary</span></li>
+            <li>REST is simpler: works <span class="c-blue">everywhere</span></li>
+            <li>Both can coexist in the same system</li>
+            <li>Performance matters at <span class="c-orange">scale</span></li>
+            <li>gRPC shines <span class="c-cyan">inside</span> data centers</li>
+            <li>REST shines at the <span class="c-blue">edge</span> (public APIs)</li>
+            <li>Pick based on your actual use case</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 · Q&A -->
+    <div class="slide">
+      <div style="display:flex;flex-direction:column;justify-content:center;height:100%;">
+        <div class="slide-label">That's a wrap</div>
+        <h1>Q <span class="c-cyan">&amp;</span> A</h1>
+        <div class="divider"></div>
+        <p style="color:var(--dim);max-width:28em;">Any questions? No question is too basic — that's the point of this talk.</p>
+        <div class="row mt2" style="flex-wrap:wrap;gap:.6em;">
+          <div class="card" style="font-size:.6em;flex:none;">
+            🔗 <span class="c-cyan">dwinanda09.github.io</span>
+          </div>
+          <div class="card" style="font-size:.6em;flex:none;">
+            💼 <a href="https://linkedin.com/in/dwi-nanda-3ba842103" target="_blank" rel="noopener" class="c-cyan" style="text-decoration:none;">linkedin.com/in/dwi-nanda-3ba842103</a>
+          </div>
+        </div>
+        <p class="mt2" style="font-size:.58em;color:var(--muted);">Thank you for listening.</p>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+</div><!-- /#sdeck-modal -->
+
+<!-- slide deck chrome (outside modal so fixed positioning works) -->
+<button class="sdeck-close-btn" onclick="closeSlides()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  Back
+</button>
+<button class="sdeck-nav" id="sdeck-prev" onclick="sdeck_go(-1)" aria-label="Previous slide">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="sdeck-nav" id="sdeck-next" onclick="sdeck_go(1)" aria-label="Next slide">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+<div class="sdeck-counter"><span id="sdeck-cur">1</span> / <span id="sdeck-tot">14</span></div>
+<div class="sdeck-progress"><div class="sdeck-progress-fill" id="sdeck-prog"></div></div>
+<p class="sdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
+
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -611,7 +1286,7 @@
   }
 
   // Active nav on scroll
-  const sections = ['home','about','skills','experience','projects'];
+  const sections = ['home','about','skills','experience','projects','talks'];
   window.addEventListener('scroll', () => {
     const pos = window.scrollY + 120;
     for (const id of sections) {
@@ -623,6 +1298,57 @@
   });
 
   setActive('home');
+
+  // ── Slide deck ──────────────────────────────────────
+  const sdeck_slides = document.querySelectorAll('#sdeck-modal .slide');
+  const sdeck_total  = sdeck_slides.length;
+  let   sdeck_cur    = 0;
+
+  function sdeck_render() {
+    sdeck_slides.forEach((s, i) => s.classList.toggle('active', i === sdeck_cur));
+    document.getElementById('sdeck-cur').textContent  = sdeck_cur + 1;
+    document.getElementById('sdeck-tot').textContent  = sdeck_total;
+    document.getElementById('sdeck-prog').style.width = ((sdeck_cur + 1) / sdeck_total * 100) + '%';
+  }
+
+  function sdeck_go(dir) {
+    sdeck_cur = Math.max(0, Math.min(sdeck_total - 1, sdeck_cur + dir));
+    sdeck_render();
+  }
+
+  function openSlides() {
+    sdeck_cur = 0;
+    sdeck_render();
+    const modal = document.getElementById('sdeck-modal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint')
+      .forEach(el => el.classList.add('visible'));
+  }
+
+  function closeSlides() {
+    document.getElementById('sdeck-modal').classList.remove('open');
+    document.body.style.overflow = '';
+    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint')
+      .forEach(el => el.classList.remove('visible'));
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('sdeck-modal').classList.contains('open')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ')  { e.preventDefault(); sdeck_go(1); }
+    if (e.key === 'ArrowLeft')                     { e.preventDefault(); sdeck_go(-1); }
+    if (e.key === 'Escape')                        { closeSlides(); }
+  });
+
+  // touch swipe
+  let sdeck_tx = null;
+  document.getElementById('sdeck-modal').addEventListener('touchstart', e => { sdeck_tx = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('sdeck-modal').addEventListener('touchend',   e => {
+    if (sdeck_tx === null) return;
+    const dx = e.changedTouches[0].clientX - sdeck_tx;
+    if (Math.abs(dx) > 40) sdeck_go(dx < 0 ? 1 : -1);
+    sdeck_tx = null;
+  });
 </script>
 </body>
 </html>
