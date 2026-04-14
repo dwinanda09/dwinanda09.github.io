@@ -454,6 +454,107 @@
   .sdeck-progress-fill { height: 100%; background: linear-gradient(90deg,#06b6d4,#0e7490); transition: width .3s ease; }
   .sdeck-hint { position: fixed; bottom: .9rem; left: 50%; transform: translateX(-50%); z-index: 201; font-size: .62rem; color: #475569; font-family: 'Inter', sans-serif; pointer-events: none; display: none; }
   .sdeck-hint.visible { display: block; }
+
+  /* ── TOC sidebar ── */
+  .sdeck-toc {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 202;
+    width: 14rem; background: rgba(10,15,28,.97); border-right: 1px solid #1e293b;
+    backdrop-filter: blur(12px); font-family: 'Inter', sans-serif;
+    display: none; flex-direction: column; gap: 0;
+    transform: translateX(-100%); transition: transform .25s ease;
+  }
+  .sdeck-toc.visible { display: flex; }
+  .sdeck-toc.open    { transform: translateX(0); }
+  .sdeck-toc-header {
+    padding: .75rem 1rem; border-bottom: 1px solid #1e293b;
+    font-size: .65rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: #475569;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sdeck-toc-list { overflow-y: auto; flex: 1; padding: .4rem 0; }
+  .sdeck-toc-item {
+    display: flex; align-items: center; gap: .55rem;
+    padding: .45rem 1rem; cursor: pointer; font-size: .67rem;
+    color: #64748b; transition: background .15s, color .15s;
+    border-left: 2px solid transparent;
+  }
+  .sdeck-toc-item:hover { background: rgba(6,182,212,.06); color: #94a3b8; }
+  .sdeck-toc-item.active { color: #06b6d4; border-left-color: #06b6d4; background: rgba(6,182,212,.08); }
+  .sdeck-toc-num { font-size: .58rem; color: #334155; min-width: 1.4rem; font-variant-numeric: tabular-nums; }
+  .sdeck-toc-btn {
+    position: fixed; top: .7rem; left: 5.8rem; z-index: 203;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    color: #64748b; width: 2rem; height: 2rem; border-radius: .4rem;
+    cursor: pointer; display: none; align-items: center; justify-content: center;
+    transition: color .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  .sdeck-toc-btn.visible { display: flex; }
+  .sdeck-toc-btn:hover   { color: #06b6d4; border-color: rgba(8,145,178,.3); }
+  .sdeck-toc-btn.active  { color: #06b6d4; border-color: rgba(8,145,178,.4); background: rgba(6,182,212,.08); }
+
+  /* ── network animation slide ── */
+  #sdeck-modal .anim-panels { display:flex; gap:0; height:72%; margin-top:.8em; }
+  #sdeck-modal .anim-half   { flex:1; display:flex; flex-direction:column; gap:.5em; padding:0 .8em; }
+  #sdeck-modal .anim-half-title { font-size:.6em; font-weight:800; text-align:center; padding:.35em .7em; border-radius:.4em; }
+  #sdeck-modal .anim-divider    { width:1px; background:var(--border); flex-shrink:0; }
+  #sdeck-modal .anim-track  { display:flex; align-items:center; gap:.45em; flex:1; }
+  #sdeck-modal .anim-node   { font-size:.42em; font-weight:800; width:2em; height:2em; border-radius:.35em; border:1px solid var(--border); background:var(--card); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--text); }
+  #sdeck-modal .anim-pipe   { flex:1; position:relative; height:1.9em; background:#060d1f; border:1px solid var(--border); border-radius:99px; overflow:hidden; }
+  #sdeck-modal .anim-stat   { font-size:.5em; text-align:center; color:var(--dim); margin-top:.1em; }
+
+  /* REST: large slow sequential packets */
+  @keyframes sdeck-rest {
+    0%   { left:3%; opacity:0; }
+    7%   { opacity:1; }
+    28%  { left:62%; opacity:1; }
+    35%  { opacity:0; }
+    100% { left:62%; opacity:0; }
+  }
+  #sdeck-modal .rpkt {
+    position:absolute; top:50%; transform:translateY(-50%);
+    height:1.25em; width:3.4em;
+    background:linear-gradient(90deg,var(--blue),#1d4ed8);
+    border-radius:99px;
+    font-size:.38em; font-weight:700; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    letter-spacing:.02em;
+    box-shadow:0 0 8px rgba(96,165,250,.4);
+    animation:sdeck-rest 9s ease-in-out infinite;
+  }
+  #sdeck-modal .rpkt.d2 { animation-delay:3s; }
+  #sdeck-modal .rpkt.d3 { animation-delay:6s; }
+
+  /* gRPC: small fast parallel packets */
+  @keyframes sdeck-grpc {
+    0%   { left:3%; opacity:0; }
+    10%  { opacity:1; }
+    72%  { left:68%; opacity:1; }
+    85%  { opacity:0; }
+    100% { left:68%; opacity:0; }
+  }
+  #sdeck-modal .gpkt {
+    position:absolute; top:50%; transform:translateY(-50%);
+    height:1em; width:1.6em;
+    background:linear-gradient(90deg,var(--cyan),#0e7490);
+    border-radius:99px;
+    font-size:.34em; font-weight:700; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 6px rgba(6,182,212,.5);
+    animation:sdeck-grpc 1.8s ease-in-out infinite;
+  }
+  #sdeck-modal .gpkt.d2 { animation-delay:.4s; }
+  #sdeck-modal .gpkt.d3 { animation-delay:.8s; }
+
+  /* idle pipe glow hint */
+  @keyframes sdeck-idle-pulse {
+    0%,100% { opacity:.18; }
+    50%      { opacity:.38; }
+  }
+  #sdeck-modal .anim-pipe-idle::after {
+    content:''; position:absolute; inset:0;
+    background:rgba(100,116,139,.06);
+    animation:sdeck-idle-pulse 1.5s ease-in-out infinite;
+  }
   </style>
 </head>
 <body>
@@ -1049,7 +1150,108 @@
       </div>
     </div>
 
-    <!-- 08 · STREAMING -->
+    <!-- 08 · NETWORK ANIMATION -->
+    <div class="slide">
+      <div class="slide-label">See it live</div>
+      <h2>Request flow <span class="c-cyan">visualized</span></h2>
+      <div class="divider"></div>
+
+      <div class="anim-panels">
+
+        <!-- REST side -->
+        <div class="anim-half">
+          <div class="anim-half-title" style="background:var(--blueBg);color:var(--blue);border:1px solid var(--blueBd);">🌐 REST · HTTP/1.1</div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--blue);">C</div>
+            <div class="anim-pipe">
+              <div class="rpkt">JSON</div>
+            </div>
+            <div class="anim-node" style="color:var(--blue);">S</div>
+          </div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--blue);">C</div>
+            <div class="anim-pipe anim-pipe-idle">
+              <div class="rpkt d2">JSON</div>
+            </div>
+            <div class="anim-node" style="color:var(--blue);">S</div>
+          </div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--blue);">C</div>
+            <div class="anim-pipe anim-pipe-idle">
+              <div class="rpkt d3">JSON</div>
+            </div>
+            <div class="anim-node" style="color:var(--blue);">S</div>
+          </div>
+          <div class="anim-stat">⏳ Sequential — one at a time &nbsp;·&nbsp; ~4.8ms</div>
+        </div>
+
+        <div class="anim-divider"></div>
+
+        <!-- gRPC side -->
+        <div class="anim-half">
+          <div class="anim-half-title" style="background:var(--cyanBg);color:var(--cyan);border:1px solid var(--cyanBd);">⚡ gRPC · HTTP/2</div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--cyan);">C</div>
+            <div class="anim-pipe">
+              <div class="gpkt">0x</div>
+            </div>
+            <div class="anim-node" style="color:var(--cyan);">S</div>
+          </div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--cyan);">C</div>
+            <div class="anim-pipe">
+              <div class="gpkt d2">0x</div>
+            </div>
+            <div class="anim-node" style="color:var(--cyan);">S</div>
+          </div>
+          <div class="anim-track">
+            <div class="anim-node" style="color:var(--cyan);">C</div>
+            <div class="anim-pipe">
+              <div class="gpkt d3">0x</div>
+            </div>
+            <div class="anim-node" style="color:var(--cyan);">S</div>
+          </div>
+          <div class="anim-stat c-cyan">⚡ Multiplexed — all streams at once &nbsp;·&nbsp; ~1.2ms</div>
+        </div>
+
+      </div>
+
+      <!-- Legend row -->
+      <div style="display:flex;gap:.5em;justify-content:center;flex-wrap:wrap;font-size:.5em;margin-top:.6em;">
+        <span style="display:flex;align-items:center;gap:.35em;background:#0d1b2e;border:1px solid var(--border);border-radius:99px;padding:.25em .75em;">
+          <span style="width:.9em;height:.9em;border-radius:50%;background:var(--blue);display:inline-block;"></span>
+          <strong style="color:var(--blue);">C</strong> = Client
+        </span>
+        <span style="display:flex;align-items:center;gap:.35em;background:#0d1b2e;border:1px solid var(--border);border-radius:99px;padding:.25em .75em;">
+          <span style="width:.9em;height:.9em;border-radius:50%;background:var(--blue);display:inline-block;"></span>
+          <strong style="color:var(--blue);">S</strong> = Server
+        </span>
+        <span style="display:flex;align-items:center;gap:.35em;background:#0d1b2e;border:1px solid var(--border);border-radius:99px;padding:.25em .75em;">
+          <span style="width:2em;height:.75em;border-radius:99px;background:linear-gradient(90deg,var(--blue),#1d4ed8);display:inline-block;"></span>
+          JSON blob = text HTTP payload
+        </span>
+        <span style="display:flex;align-items:center;gap:.35em;background:#0d1b2e;border:1px solid var(--border);border-radius:99px;padding:.25em .75em;">
+          <span style="width:1.2em;height:.75em;border-radius:99px;background:linear-gradient(90deg,var(--cyan),#0e7490);display:inline-block;"></span>
+          0x blob = binary Protobuf frame
+        </span>
+      </div>
+
+      <!-- Explanation cards -->
+      <div style="display:flex;gap:.5em;margin-top:.45em;font-size:.5em;">
+        <div style="flex:1;background:var(--blueBg);border:1px solid var(--blueBd);border-radius:.55em;padding:.6em .8em;line-height:1.6;">
+          <strong class="c-blue">REST / HTTP 1.1 —</strong> one TCP connection = one request at a time.
+          While req #1 travels, req #2 &amp; #3 must <em>wait in line</em> (head-of-line blocking).
+          Large JSON payloads add extra round-trip overhead.
+        </div>
+        <div style="flex:1;background:var(--cyanBg);border:1px solid var(--cyanBd);border-radius:.55em;padding:.6em .8em;line-height:1.6;">
+          <strong class="c-cyan">gRPC / HTTP 2 —</strong> one TCP connection carries
+          <em>multiple streams simultaneously</em> (multiplexing). Tiny binary Protobuf frames
+          travel in parallel — no waiting, no blocking, 4× faster in this example.
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 · STREAMING -->
     <div class="slide">
       <div class="slide-label">The hidden superpower</div>
       <h2>gRPC <span class="c-cyan">Streaming</span></h2>
@@ -1234,7 +1436,56 @@
       </div>
     </div>
 
-    <!-- 14 · Q&A -->
+    <!-- 14 · WHO USES gRPC -->
+    <div class="slide">
+      <div class="slide-label">Real world</div>
+      <h2>Who uses <span class="c-cyan">gRPC</span> in production?</h2>
+      <div class="divider"></div>
+      <div class="row mt" style="flex-wrap:wrap;gap:.65em;align-items:stretch;">
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://cdn.simpleicons.org/google/ffffff" alt="Google" style="width:1.8em;height:1.8em;object-fit:contain;">
+          <strong class="c-cyan">Google</strong>
+          <span style="font-size:.56em;color:var(--dim);">Created gRPC. Powers internal services across Search, Maps, YouTube, and GCP APIs.</span>
+        </div>
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://cdn.simpleicons.org/netflix/E50914" alt="Netflix" style="width:1.8em;height:1.8em;object-fit:contain;">
+          <strong class="c-cyan">Netflix</strong>
+          <span style="font-size:.56em;color:var(--dim);">Uses gRPC for inter-service communication across its microservices platform (hundreds of services).</span>
+        </div>
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://cdn.simpleicons.org/shopify/96BF48" alt="Shopify" style="width:1.8em;height:1.8em;object-fit:contain;">
+          <strong class="c-cyan">Shopify</strong>
+          <span style="font-size:.56em;color:var(--dim);">Migrated core backend services to gRPC to handle Black Friday-scale traffic spikes.</span>
+        </div>
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://logo.clearbit.com/slack.com" alt="Slack" style="width:1.8em;height:1.8em;object-fit:contain;border-radius:.2em;">
+          <strong class="c-cyan">Slack</strong>
+          <span style="font-size:.56em;color:var(--dim);">Adopted gRPC to reduce latency in real-time messaging pipelines between backend services.</span>
+        </div>
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://cdn.simpleicons.org/cloudflare/F6821F" alt="Cloudflare" style="width:1.8em;height:1.8em;object-fit:contain;">
+          <strong class="c-cyan">Cloudflare</strong>
+          <span style="font-size:.56em;color:var(--dim);">Runs gRPC-based edge services at 300+ global data centers for low-latency routing.</span>
+        </div>
+
+        <div class="card" style="flex:1;min-width:9em;padding:.7em .85em;display:flex;flex-direction:column;gap:.3em;">
+          <img src="https://cdn.simpleicons.org/cisco/1BA0D7" alt="Cisco" style="width:1.8em;height:1.8em;object-fit:contain;">
+          <strong class="c-cyan">Cisco</strong>
+          <span style="font-size:.56em;color:var(--dim);">Uses gRPC for streaming telemetry and network device management in its networking hardware.</span>
+        </div>
+
+      </div>
+      <div class="card card-cyan mt2" style="font-size:.52em;">
+        Common pattern: REST for public/external APIs &nbsp;·&nbsp; <strong class="c-cyan">gRPC for internal service-to-service</strong> where performance matters.
+      </div>
+    </div>
+
+    <!-- 15 · Q&A -->
     <div class="slide">
       <div style="display:flex;flex-direction:column;justify-content:center;height:100%;">
         <div class="slide-label">That's a wrap</div>
@@ -1261,13 +1512,26 @@
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
   Back
 </button>
+<!-- TOC toggle button -->
+<button class="sdeck-toc-btn" id="sdeck-toc-btn" onclick="toggleTOC()" aria-label="Table of contents">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h10"/></svg>
+</button>
+<!-- TOC sidebar -->
+<nav class="sdeck-toc" id="sdeck-toc">
+  <div class="sdeck-toc-header">
+    <span>Slides</span>
+    <span id="sdeck-toc-prog" style="color:#334155;font-size:.6rem;"></span>
+  </div>
+  <div class="sdeck-toc-list" id="sdeck-toc-list"></div>
+</nav>
+
 <button class="sdeck-nav" id="sdeck-prev" onclick="sdeck_go(-1)" aria-label="Previous slide">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M15 18l-6-6 6-6"/></svg>
 </button>
 <button class="sdeck-nav" id="sdeck-next" onclick="sdeck_go(1)" aria-label="Next slide">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M9 18l6-6-6-6"/></svg>
 </button>
-<div class="sdeck-counter"><span id="sdeck-cur">1</span> / <span id="sdeck-tot">14</span></div>
+<div class="sdeck-counter"><span id="sdeck-cur">1</span> / <span id="sdeck-tot">16</span></div>
 <div class="sdeck-progress"><div class="sdeck-progress-fill" id="sdeck-prog"></div></div>
 <p class="sdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
 
@@ -1304,16 +1568,53 @@
   const sdeck_total  = sdeck_slides.length;
   let   sdeck_cur    = 0;
 
+  // TOC labels (one per slide, in order)
+  const sdeck_toc_labels = [
+    'Title', 'Agenda', 'What is REST?', 'What is gRPC?',
+    'Why Performance Differs', 'Payload Size', 'Benchmarks',
+    'Network Animation', 'Streaming', 'Comparison Table',
+    'When to use gRPC', 'When to use REST', 'Decision Flowchart',
+    'Key Takeaways', 'Who Uses gRPC', 'Q & A'
+  ];
+
+  // Build TOC list
+  const sdeck_toc_list = document.getElementById('sdeck-toc-list');
+  sdeck_toc_labels.forEach((label, i) => {
+    const item = document.createElement('div');
+    item.className = 'sdeck-toc-item';
+    item.id = 'sdeck-toc-' + i;
+    item.innerHTML = `<span class="sdeck-toc-num">${String(i + 1).padStart(2, '0')}</span><span>${label}</span>`;
+    item.addEventListener('click', () => { sdeck_cur = i; sdeck_render(); });
+    sdeck_toc_list.appendChild(item);
+  });
+
   function sdeck_render() {
     sdeck_slides.forEach((s, i) => s.classList.toggle('active', i === sdeck_cur));
     document.getElementById('sdeck-cur').textContent  = sdeck_cur + 1;
     document.getElementById('sdeck-tot').textContent  = sdeck_total;
     document.getElementById('sdeck-prog').style.width = ((sdeck_cur + 1) / sdeck_total * 100) + '%';
+    document.getElementById('sdeck-toc-prog').textContent = (sdeck_cur + 1) + ' / ' + sdeck_total;
+    // sync TOC active item
+    document.querySelectorAll('.sdeck-toc-item').forEach((el, i) => {
+      el.classList.toggle('active', i === sdeck_cur);
+    });
+    // scroll active TOC item into view
+    const active = document.getElementById('sdeck-toc-' + sdeck_cur);
+    if (active) active.scrollIntoView({ block: 'nearest' });
   }
 
   function sdeck_go(dir) {
     sdeck_cur = Math.max(0, Math.min(sdeck_total - 1, sdeck_cur + dir));
     sdeck_render();
+  }
+
+  let sdeck_toc_open = false;
+  function toggleTOC() {
+    sdeck_toc_open = !sdeck_toc_open;
+    const toc = document.getElementById('sdeck-toc');
+    const btn = document.getElementById('sdeck-toc-btn');
+    toc.classList.toggle('open', sdeck_toc_open);
+    btn.classList.toggle('active', sdeck_toc_open);
   }
 
   function openSlides() {
@@ -1322,15 +1623,16 @@
     const modal = document.getElementById('sdeck-modal');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
-    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint')
+    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint, .sdeck-toc-btn, .sdeck-toc')
       .forEach(el => el.classList.add('visible'));
   }
 
   function closeSlides() {
     document.getElementById('sdeck-modal').classList.remove('open');
     document.body.style.overflow = '';
-    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint')
-      .forEach(el => el.classList.remove('visible'));
+    sdeck_toc_open = false;
+    document.querySelectorAll('.sdeck-nav, .sdeck-close-btn, .sdeck-counter, .sdeck-progress, .sdeck-hint, .sdeck-toc-btn, .sdeck-toc')
+      .forEach(el => el.classList.remove('visible', 'open', 'active'));
   }
 
   document.addEventListener('keydown', e => {
