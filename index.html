@@ -491,8 +491,20 @@
   }
   .sdeck-close-btn.visible { display: flex; }
   .sdeck-close-btn:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
-  .sdeck-counter { position: fixed; bottom: .8rem; right: 1rem; z-index: 201; font-size: .72rem; color: #64748b; font-family: 'Inter', sans-serif; display: none; }
-  .sdeck-counter.visible { display: block; }
+  .sdeck-counter {
+    position: fixed; bottom: .85rem; right: 1rem; z-index: 201;
+    font-size: .82rem; color: #94a3b8; font-family: 'Inter', sans-serif;
+    background: rgba(15,23,42,.85); border: 1px solid #1e293b;
+    padding: .35rem .8rem; border-radius: .5rem;
+    backdrop-filter: blur(8px);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: .02em;
+    display: none;
+  }
+  .sdeck-counter.visible { display: inline-flex; align-items: center; gap: .35em; }
+  .sdeck-counter #sdeck-cur { color: #06b6d4; font-weight: 700; font-size: 1.05em; }
+  .sdeck-counter .sep { color: #475569; }
   .sdeck-progress { position: fixed; bottom: 0; left: 0; right: 0; z-index: 201; height: 3px; background: rgba(30,41,59,.6); display: none; }
   .sdeck-progress.visible { display: block; }
   .sdeck-progress-fill { height: 100%; background: linear-gradient(90deg,#06b6d4,#0e7490); transition: width .3s ease; }
@@ -744,8 +756,20 @@
   }
   .sysdeck-close-btn.visible { display: flex; }
   .sysdeck-close-btn:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
-  .sysdeck-counter { position: fixed; bottom: .8rem; right: 1rem; z-index: 201; font-size: .72rem; color: #64748b; font-family: 'Inter', sans-serif; display: none; }
-  .sysdeck-counter.visible { display: block; }
+  .sysdeck-counter {
+    position: fixed; bottom: .85rem; right: 1rem; z-index: 201;
+    font-size: .82rem; color: #94a3b8; font-family: 'Inter', sans-serif;
+    background: rgba(15,23,42,.85); border: 1px solid #1e293b;
+    padding: .35rem .8rem; border-radius: .5rem;
+    backdrop-filter: blur(8px);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: .02em;
+    display: none;
+  }
+  .sysdeck-counter.visible { display: inline-flex; align-items: center; gap: .35em; }
+  .sysdeck-counter #sysdeck-cur { color: #06b6d4; font-weight: 700; font-size: 1.05em; }
+  .sysdeck-counter .sep { color: #475569; }
   .sysdeck-progress { position: fixed; bottom: 0; left: 0; right: 0; z-index: 201; height: 3px; background: rgba(30,41,59,.6); display: none; }
   .sysdeck-progress.visible { display: block; }
   .sysdeck-progress-fill { height: 100%; background: linear-gradient(90deg,#06b6d4,#0e7490); transition: width .3s ease; }
@@ -1047,7 +1071,62 @@
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       Notable Projects
     </h2>
+
     <div class="project-card">
+      <div class="project-inner">
+        <div class="project-header">
+          <div class="project-title">AI Video Content Platform</div>
+          <span class="project-tag">BALIKLAYAR.AI · CO-FOUNDER</span>
+        </div>
+        <ul class="project-list">
+          <li>
+            <div class="dot"></div>
+            <p>Co-founded and operate as <strong>Platform Guardian</strong> in a 2-person team — owning end-to-end platform reliability (servers, data integrity, observability, anomaly alerting, audit trails) while my peer owns product, growth, and research.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Architected a multi-model AI rendering pipeline integrating Veo 3.1 Lite, Kling v3 Omni, Gemini 2.5 Flash, Gemini Vision, and Imagen — with multi-vendor routing (env-driven auto-router by reference-video duration) and atomic credit deduct → refund on vendor failure to absorb upstream API instability.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Built an executive admin dashboard surfacing revenue, user growth, user journey, audit trails, and live video-generation job state — currently tracking <strong>400+ registered users, 3,800+ transactions, and 300+ rendered videos (~2.4 GB)</strong> with ~300 DAU peak, enabling real-time anomaly detection on hanging pipeline jobs.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Entire codebase shipped via <strong>Claude Code-driven engineering</strong> — defining architecture, designing systems, and validating implementation through LLM-orchestrated workflows, proving production-grade SaaS delivery without manual coding.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="project-card" style="margin-top: 1.5rem;">
+      <div class="project-inner">
+        <div class="project-header">
+          <div class="project-title">WC2026 Prediction Pipeline</div>
+          <span class="project-tag">PERSONAL · FIFA WORLD CUP 2026</span>
+        </div>
+        <ul class="project-list">
+          <li>
+            <div class="dot"></div>
+            <p>Designed a 4-stage Python pipeline predicting scorelines for the FIFA World Cup 2026 (72 group-stage + 32 knockout fixtures) — combining an <strong>Elo + Poisson + xG</strong> statistical baseline with <strong>multi-LLM consensus</strong> (Claude Opus 4.7, Claude Sonnet 4.6, and Gemini 3.5 Flash) reconciled via majority-vote synthesis.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Engineered concurrency-safe LLM orchestration — thread semaphore (cap 3) + sliding-window RPM limiter (13/60s via deque timestamp pruning) + retry-with-backoff, and a JSON normalizer that handles 6+ output-shape variants across models.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Solved the "score-averaging phantom" correctness bug — naïve averaging of consensus votes produced scorelines neither model actually predicted (avg of 1–0 and 0–1 → 0–0/1–1); fixed by filtering scores to only those matching the consensus winner before averaging.</p>
+          </li>
+          <li>
+            <div class="dot"></div>
+            <p>Achieved <strong>#1 country-wide in Indonesia</strong> and <strong>top 1% global percentile</strong> on SuperBru across all 3 group-stage rounds — validated the pipeline's design through iterative back-analysis feeding ranked upgrades between rounds instead of full rewrites.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="project-card" style="margin-top: 1.5rem;">
       <div class="project-inner">
         <div class="project-header">
           <div class="project-title">Biller Partner Integration</div>
@@ -2230,7 +2309,7 @@ sequenceDiagram
     BE-->>FE: {status, video_url?}
   end
   Note over S,OS: Background — Scheduler drains per-engine queue
-  S->>BE: POST /admin/poll/<engine>
+  S->>BE: POST /admin/poll/{engine}
   loop Each pending task
     BE->>V: GET status
     alt Completed
@@ -2795,7 +2874,7 @@ sequenceDiagram
 <button class="sdeck-nav" id="sdeck-next" onclick="sdeck_go(1)" aria-label="Next slide">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M9 18l6-6-6-6"/></svg>
 </button>
-<div class="sdeck-counter"><span id="sdeck-cur">1</span> / <span id="sdeck-tot">16</span></div>
+<div class="sdeck-counter"><span id="sdeck-cur">1</span><span class="sep">/</span><span id="sdeck-tot">16</span></div>
 <div class="sdeck-progress"><div class="sdeck-progress-fill" id="sdeck-prog"></div></div>
 <p class="sdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
 
@@ -2811,7 +2890,7 @@ sequenceDiagram
 <button class="sysdeck-nav" id="sysdeck-next" onclick="sysdeck_go(1)" aria-label="Next slide">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M9 18l6-6-6-6"/></svg>
 </button>
-<div class="sysdeck-counter"><span id="sysdeck-cur">1</span> / <span id="sysdeck-tot">4</span></div>
+<div class="sysdeck-counter"><span id="sysdeck-cur">1</span><span class="sep">/</span><span id="sysdeck-tot">4</span></div>
 <div class="sysdeck-progress"><div class="sysdeck-progress-fill" id="sysdeck-prog"></div></div>
 <p class="sysdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
 
