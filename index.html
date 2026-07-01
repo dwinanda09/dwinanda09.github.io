@@ -826,13 +826,13 @@
   <div class="nav-inner">
     <a class="logo" href="#home">DNS<span>.</span></a>
     <div class="nav-links">
-      <button onclick="scrollTo('home')"     id="nav-home">Home</button>
-      <button onclick="scrollTo('about')"    id="nav-about">About</button>
-      <button onclick="scrollTo('skills')"   id="nav-skills">Skills</button>
-      <button onclick="scrollTo('experience')" id="nav-experience">Experience</button>
-      <button onclick="scrollTo('projects')"    id="nav-projects">Projects</button>
-      <button onclick="scrollTo('system-designs')" id="nav-system-designs">Systems</button>
-      <button onclick="scrollTo('talks')"       id="nav-talks">Talks</button>
+      <button onclick="scrollToId('home')"     id="nav-home">Home</button>
+      <button onclick="scrollToId('about')"    id="nav-about">About</button>
+      <button onclick="scrollToId('skills')"   id="nav-skills">Skills</button>
+      <button onclick="scrollToId('experience')" id="nav-experience">Experience</button>
+      <button onclick="scrollToId('projects')"    id="nav-projects">Projects</button>
+      <button onclick="scrollToId('system-designs')" id="nav-system-designs">Systems</button>
+      <button onclick="scrollToId('talks')"       id="nav-talks">Talks</button>
     </div>
   </div>
 </nav>
@@ -2905,7 +2905,7 @@ sequenceDiagram
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  function scrollTo(id) {
+  function scrollToId(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setActive(id);
   }

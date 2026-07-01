@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIFA World Cup 2026 Analytics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <style>
         * {
             margin: 0;
@@ -13,19 +16,19 @@
         }
 
         :root {
-            --color-dark: #0f0f0f;
-            --color-surface: #1a1a1a;
-            --color-surface-light: #2a2a2a;
-            --color-text: #f5f5f5;
-            --color-text-secondary: #b0b0b0;
-            --color-elite: #d4af37;
-            --color-strong: #c0c0c0;
-            --color-contender: #cd7f32;
-            --color-accent: #00d4ff;
-            --color-highlight: #ff6b6b;
+            --color-dark: #020617;
+            --color-surface: #0f172a;
+            --color-surface-light: #1e293b;
+            --color-text: #cbd5e1;
+            --color-text-secondary: #64748b;
+            --color-elite: #06b6d4;
+            --color-strong: #94a3b8;
+            --color-contender: #60a5fa;
+            --color-accent: #60a5fa;
+            --color-highlight: #a78bfa;
 
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-serif: 'Inter', 'Georgia', 'Times New Roman', serif;
 
             --space-xs: 0.5rem;
             --space-sm: 1rem;
@@ -93,7 +96,7 @@
 
         .card:hover {
             border-color: var(--color-accent);
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.1);
         }
 
         /* WIDE CARD (2-column) */
@@ -174,7 +177,7 @@
         .rank-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
-            background: rgba(212, 175, 55, 0.15);
+            background: rgba(6, 182, 212, 0.15);
             border: 1px solid var(--color-elite);
             border-radius: 4px;
             font-size: 0.75rem;
@@ -184,7 +187,7 @@
         }
 
         .rank-badge.debutant {
-            background: rgba(192, 192, 192, 0.15);
+            background: rgba(148, 163, 184, 0.15);
             border-color: var(--color-strong);
             color: var(--color-strong);
         }
@@ -313,7 +316,7 @@
         .debutant-tag {
             display: inline-block;
             padding: 0.4rem 0.8rem;
-            background: rgba(192, 192, 192, 0.1);
+            background: rgba(148, 163, 184, 0.1);
             border: 1px solid var(--color-strong);
             border-radius: 4px;
             font-size: 0.85rem;
@@ -370,14 +373,14 @@
         .round-block.knockout {
             margin-top: var(--space-xxl);
             padding: var(--space-lg);
-            background: linear-gradient(180deg, rgba(212,175,55,0.06), rgba(155,89,182,0.04));
-            border: 1px solid rgba(212,175,55,0.25);
+            background: linear-gradient(180deg, rgba(6,182,212,0.06), rgba(167,139,250,0.04));
+            border: 1px solid rgba(6,182,212,0.25);
             border-radius: 12px;
         }
 
         .round-block.knockout .round-label {
             color: var(--color-elite);
-            border-bottom-color: rgba(212,175,55,0.35);
+            border-bottom-color: rgba(6,182,212,0.35);
         }
 
         .round-block.knockout .round-label::before {
@@ -393,8 +396,8 @@
             letter-spacing: 1.5px;
             padding: 2px 8px;
             margin-left: 10px;
-            background: linear-gradient(135deg, #d4af37, #9b59b6);
-            color: #fff;
+            background: linear-gradient(135deg, #06b6d4, #a78bfa);
+            color: #f8fafc;
             border-radius: 4px;
             vertical-align: middle;
         }
@@ -514,7 +517,7 @@
             bottom: calc(100% + 8px);
             left: 50%;
             transform: translateX(-50%) translateY(4px);
-            background: #050505;
+            background: #020617;
             color: var(--color-text);
             border: 1px solid var(--color-elite);
             padding: 0.55rem 0.8rem;
@@ -562,14 +565,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #111;
+            color: #0f172a;
             transition: width var(--duration-normal) var(--ease-out-expo);
             white-space: nowrap;
             overflow: hidden;
         }
 
         .prob-a {
-            background: linear-gradient(90deg, #d4af37, #e8c460);
+            background: linear-gradient(90deg, #06b6d4, #67e8f9);
         }
 
         .prob-d {
@@ -580,7 +583,7 @@
         }
 
         .prob-b {
-            background: linear-gradient(90deg, #00b8e0, #00d4ff);
+            background: linear-gradient(90deg, #0e7490, #60a5fa);
         }
 
         .fixture-meta {
@@ -632,37 +635,37 @@
         }
 
         .pill.grp {
-            background: rgba(0,212,255,0.1);
+            background: rgba(96,165,250,0.1);
             color: var(--color-accent);
-            border: 1px solid rgba(0,212,255,0.3);
+            border: 1px solid rgba(96,165,250,0.3);
         }
 
         .pill.conf-high {
-            background: rgba(212,175,55,0.15);
+            background: rgba(6,182,212,0.15);
             color: var(--color-elite);
             border: 1px solid var(--color-elite);
         }
 
         .pill.conf-med {
-            background: rgba(192,192,192,0.1);
+            background: rgba(148,163,184,0.1);
             color: var(--color-strong);
             border: 1px solid var(--color-strong);
         }
 
         .pill.conf-low {
-            background: rgba(255,107,107,0.1);
+            background: rgba(167,139,250,0.1);
             color: var(--color-highlight);
             border: 1px solid var(--color-highlight);
         }
 
         .pill.verdict {
-            background: rgba(0,212,255,0.08);
+            background: rgba(96,165,250,0.08);
             color: var(--color-text);
             border: 1px solid var(--color-accent);
         }
 
         .pill.debutant {
-            background: rgba(192,192,192,0.08);
+            background: rgba(148,163,184,0.08);
             color: var(--color-strong);
             border: 1px dashed var(--color-strong);
         }
@@ -682,8 +685,8 @@
             font-size: 0.65rem;
             font-weight: 700;
             letter-spacing: 1.5px;
-            background: linear-gradient(135deg, #4285f4, #00d4ff);
-            color: #0a0a0a;
+            background: linear-gradient(135deg, #60a5fa, #60a5fa);
+            color: #020617;
             padding: 0.25rem 0.6rem;
             border-radius: 999px;
             vertical-align: middle;
@@ -717,8 +720,8 @@
             flex: 1 1 100%;
             margin-top: 0.6rem;
             padding: 0.85rem 1rem;
-            background: linear-gradient(135deg, rgba(66,133,244,0.06), rgba(0,212,255,0.04));
-            border: 1px solid rgba(66,133,244,0.25);
+            background: linear-gradient(135deg, rgba(96,165,250,0.06), rgba(96,165,250,0.04));
+            border: 1px solid rgba(96,165,250,0.25);
             border-radius: 8px;
             position: relative;
         }
@@ -728,7 +731,7 @@
             position: absolute;
             left: 0; top: 0; bottom: 0;
             width: 3px;
-            background: linear-gradient(180deg, #4285f4, #00d4ff);
+            background: linear-gradient(180deg, #60a5fa, #60a5fa);
             border-radius: 8px 0 0 8px;
         }
 
@@ -737,7 +740,7 @@
             font-weight: 700;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: #6da9ff;
+            color: #93c5fd;
             margin-bottom: 0.4rem;
         }
 
@@ -758,8 +761,8 @@
         .factor-chip {
             display: inline-block;
             padding: 0.25rem 0.6rem;
-            background: rgba(66,133,244,0.1);
-            border: 1px solid rgba(66,133,244,0.3);
+            background: rgba(96,165,250,0.1);
+            border: 1px solid rgba(96,165,250,0.3);
             color: var(--color-text);
             border-radius: 4px;
             font-size: 0.72rem;
@@ -917,12 +920,12 @@
             letter-spacing: 0.5px;
         }
         .status-finished {
-            background: rgba(0, 212, 255, 0.15);
+            background: rgba(96, 165, 250, 0.15);
             border: 1px solid var(--color-accent);
             color: var(--color-accent);
         }
         .status-predictive {
-            background: rgba(212, 175, 55, 0.15);
+            background: rgba(6, 182, 212, 0.15);
             border: 1px solid var(--color-elite);
             color: var(--color-elite);
         }
@@ -981,8 +984,8 @@
         }
         .adaptive-box {
             margin-top: 0.8rem;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(6, 182, 212, 0.05);
+            border: 1px solid rgba(6, 182, 212, 0.2);
             border-radius: 6px;
             padding: 0.6rem 0.8rem;
         }
@@ -1001,7 +1004,7 @@
         }
         .fixture-row.finished-row {
             background: linear-gradient(135deg, rgba(26,26,26,1) 0%, rgba(20,40,50,0.5) 100%);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.2);
         }
     </style>
 </head>
@@ -1329,8 +1332,8 @@
                 datasets: [{
                     label: 'Avg Goals per Match',
                     data: [4.23, 4.27, 2.78, 2.72, 2.67, 2.54, 2.41, 2.53, 2.69],
-                    backgroundColor: 'rgba(212, 175, 55, 0.7)',
-                    borderColor: '#d4af37',
+                    backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                    borderColor: '#06b6d4',
                     borderWidth: 1,
                     borderRadius: 4
                 }]
@@ -1346,11 +1349,11 @@
                     y: {
                         beginAtZero: true,
                         max: 5,
-                        ticks: { color: '#b0b0b0' },
-                        grid: { color: '#2a2a2a' }
+                        ticks: { color: '#64748b' },
+                        grid: { color: '#1e293b' }
                     },
                     x: {
-                        ticks: { color: '#b0b0b0' },
+                        ticks: { color: '#64748b' },
                         grid: { display: false }
                     }
                 }
@@ -1744,7 +1747,7 @@
                                     const m = p.multi_llm[modelName];
                                     if (!m || !m.predicted_score) return '';
                                     const mScore = `${m.predicted_score.a}-${m.predicted_score.b}`;
-                                    const borderColor = modelName.includes('sonnet') ? '#e67e22' : modelName.includes('opus') ? '#9b59b6' : 'var(--color-accent)';
+                                    const borderColor = modelName.includes('sonnet') ? '#fb923c' : modelName.includes('opus') ? '#a78bfa' : 'var(--color-accent)';
                                     const shortName = modelName.replace(/-latest|-high|-2.0|-20240229/g, '');
                                     return `
                                     <div style="flex: 1; min-width: 80px; padding: 8px; border: 1px solid var(--border-color); border-top: 3px solid ${borderColor}; border-radius: 6px; text-align: center; background: var(--bg-secondary);">
