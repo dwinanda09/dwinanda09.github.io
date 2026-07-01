@@ -8,6 +8,50 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        background: '#020617',
+        primaryColor: '#0f172a',
+        primaryTextColor: '#cbd5e1',
+        primaryBorderColor: '#1e293b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#020617',
+        lineColor: '#06b6d4',
+        textColor: '#cbd5e1',
+        mainBkg: '#0f172a',
+        actorBkg: '#0f172a',
+        actorBorder: '#06b6d4',
+        actorTextColor: '#f8fafc',
+        actorLineColor: '#1e293b',
+        signalColor: '#06b6d4',
+        signalTextColor: '#cbd5e1',
+        labelBoxBkgColor: '#0f172a',
+        labelBoxBorderColor: '#06b6d4',
+        labelTextColor: '#f8fafc',
+        loopTextColor: '#cbd5e1',
+        noteBkgColor: 'rgba(8,145,178,0.15)',
+        noteBorderColor: 'rgba(8,145,178,0.45)',
+        noteTextColor: '#cbd5e1',
+        activationBkgColor: 'rgba(6,182,212,0.18)',
+        activationBorderColor: '#06b6d4',
+        sequenceNumberColor: '#020617',
+        fontFamily: 'Inter, sans-serif'
+      },
+      sequence: {
+        actorFontFamily: 'Inter, sans-serif',
+        noteFontFamily: 'Inter, sans-serif',
+        messageFontFamily: 'JetBrains Mono, monospace',
+        wrap: true,
+        boxMargin: 8,
+        actorMargin: 50,
+        messageMargin: 32
+      }
+    });
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -555,6 +599,200 @@
     background:rgba(100,116,139,.06);
     animation:sdeck-idle-pulse 1.5s ease-in-out infinite;
   }
+
+  /* ══════════════════════════════════════════════
+     SYSTEM DESIGN DECK OVERLAY — separate namespace
+     from #sdeck-modal so gRPC deck stays untouched
+  ══════════════════════════════════════════════ */
+  #sysdeck-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: #020617; align-items: center; justify-content: center;
+  }
+  #sysdeck-modal.open { display: flex; }
+
+  #sysdeck-modal .stage {
+    position: relative;
+    width:  min(100vw, calc(100vh * 4 / 3));
+    height: min(100vh, calc(100vw *  3 / 4));
+    font-size: 2.4vmin;
+    overflow: hidden;
+    background: #020617;
+    --bg:#020617; --card:#0f172a; --border:#1e293b; --text:#cbd5e1;
+    --dim:#64748b; --muted:#475569; --white:#f8fafc;
+    --cyan:#06b6d4; --cyanL:#67e8f9; --cyanD:#0e7490;
+    --cyanBg:rgba(8,145,178,.12); --cyanBd:rgba(8,145,178,.3);
+    --blue:#60a5fa; --blueBg:rgba(29,78,216,.12); --blueBd:rgba(29,78,216,.3);
+    --green:#34d399; --greenBg:rgba(52,211,153,.08); --greenBd:rgba(52,211,153,.28);
+    --orange:#fb923c; --orangeBg:rgba(251,146,60,.08); --orangeBd:rgba(251,146,60,.28);
+    --purple:#a78bfa; --purpleBg:rgba(167,139,250,.08); --purpleBd:rgba(167,139,250,.28);
+    --red:#f87171; --redBg:rgba(248,113,113,.08); --redBd:rgba(248,113,113,.28);
+  }
+
+  /* deck-switching: only active deck participates in layout */
+  #sysdeck-modal .sysdeck-deck { display: none; }
+  #sysdeck-modal .sysdeck-deck.active { display: contents; }
+
+  #sysdeck-modal .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5.5% 7%;
+    opacity: 0; pointer-events: none;
+    transition: opacity .28s ease;
+    color: var(--text); font-family: 'Inter', sans-serif;
+  }
+  #sysdeck-modal .sysdeck-deck.active .slide.active { opacity: 1; pointer-events: auto; }
+
+  #sysdeck-modal h1 { font-size: 2.6em; font-weight: 900; color: var(--white); letter-spacing: -.03em; line-height: 1.05; margin-bottom: 0; background: none; -webkit-background-clip: unset; -webkit-text-fill-color: unset; background-clip: unset; }
+  #sysdeck-modal h2 { font-size: 1.55em; font-weight: 800; color: var(--white); letter-spacing: -.02em; line-height: 1.15; margin-bottom: 0; }
+  #sysdeck-modal p  { font-size: .72em; line-height: 1.7; margin: 0; color: var(--text); }
+  #sysdeck-modal li { font-size: .7em; line-height: 1.65; }
+  #sysdeck-modal .slide-label { font-size: .6em; font-weight: 700; color: var(--cyan); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .45em; }
+  #sysdeck-modal .divider { width: 2.8em; height: 3px; background: linear-gradient(90deg,var(--cyan),transparent); border-radius: 99px; margin: .6em 0 .9em; }
+
+  #sysdeck-modal .row { display: flex; gap: 1em; width: 100%; }
+  #sysdeck-modal .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .55em; }
+  #sysdeck-modal .mt  { margin-top: .6em; }
+  #sysdeck-modal .mt2 { margin-top: 1.1em; }
+
+  #sysdeck-modal .card { background: var(--card); border: 1px solid var(--border); border-radius: .6em; padding: .8em 1em; }
+  #sysdeck-modal .card-cyan   { background: var(--cyanBg);   border-color: var(--cyanBd); }
+  #sysdeck-modal .card-blue   { background: var(--blueBg);   border-color: var(--blueBd); }
+  #sysdeck-modal .card-green  { background: var(--greenBg);  border-color: var(--greenBd); }
+  #sysdeck-modal .card-orange { background: var(--orangeBg); border-color: var(--orangeBd); }
+  #sysdeck-modal .card-purple { background: var(--purpleBg); border-color: var(--purpleBd); }
+
+  #sysdeck-modal .c-cyan   { color: var(--cyan); }
+  #sysdeck-modal .c-blue   { color: var(--blue); }
+  #sysdeck-modal .c-green  { color: var(--green); }
+  #sysdeck-modal .c-orange { color: var(--orange); }
+  #sysdeck-modal .c-purple { color: var(--purple); }
+  #sysdeck-modal .c-red    { color: var(--red); }
+  #sysdeck-modal .c-white  { color: var(--white); }
+  #sysdeck-modal .c-dim    { color: var(--dim); }
+
+  #sysdeck-modal .pill { display: inline-block; font-size: .5em; font-weight: 700; padding: .2em .7em; border-radius: 99px; letter-spacing: .06em; text-transform: uppercase; }
+  #sysdeck-modal .pill-cyan   { background: var(--cyanBg);   color: var(--cyan);   border: 1px solid var(--cyanBd); }
+  #sysdeck-modal .pill-blue   { background: var(--blueBg);   color: var(--blue);   border: 1px solid var(--blueBd); }
+  #sysdeck-modal .pill-green  { background: var(--greenBg);  color: var(--green);  border: 1px solid var(--greenBd); }
+  #sysdeck-modal .pill-purple { background: var(--purpleBg); color: var(--purple); border: 1px solid var(--purpleBd); }
+
+  #sysdeck-modal .feat { display: flex; align-items: flex-start; gap: .7em; margin-bottom: .5em; }
+  #sysdeck-modal .feat-icon  { font-size: .8em; flex-shrink: 0; margin-top: .1em; }
+  #sysdeck-modal .feat-title { font-size: .62em; font-weight: 700; color: var(--white); margin-bottom: .1em; }
+  #sysdeck-modal .feat-desc  { font-size: .56em; color: var(--text); line-height: 1.55; }
+
+  #sysdeck-modal .checks { list-style: none; margin: 0; padding: 0; }
+  #sysdeck-modal .checks li { font-size: .62em; display: flex; align-items: flex-start; gap: .45em; padding: .22em 0; line-height: 1.55; }
+  #sysdeck-modal .checks li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  #sysdeck-modal .checks li.no::before   { content: '✗'; color: var(--red); }
+  #sysdeck-modal .checks li.warn::before { content: '⚡'; color: var(--orange); }
+
+  #sysdeck-modal .bignum  { font-size: 2.6em; font-weight: 900; letter-spacing: -.05em; line-height: 1; }
+  #sysdeck-modal .bignote { font-size: .5em; color: var(--dim); margin-top: .2em; }
+
+  #sysdeck-modal .code { font-family: 'JetBrains Mono', monospace; font-size: .54em; line-height: 1.7; background: #060d1f; border: 1px solid var(--border); border-radius: .55em; padding: .7em .85em; color: var(--text); overflow: auto; box-sizing: border-box; white-space: pre; }
+
+  /* mini stat strip — outcome slides */
+  #sysdeck-modal .stat-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(8em,1fr)); gap: .7em; }
+  #sysdeck-modal .stat-cell { background: var(--card); border: 1px solid var(--border); border-radius: .55em; padding: .9em .85em; text-align: center; }
+  #sysdeck-modal .stat-cell .bignum { font-size: 1.9em; }
+  #sysdeck-modal .stat-cell .bignote { font-size: .48em; margin-top: .25em; }
+
+  /* mermaid diagram container — diagrams should fit inside slide */
+  #sysdeck-modal .mermaid {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    flex: 1;
+    min-height: 0;
+    margin-top: .5em;
+    overflow: auto;
+  }
+  #sysdeck-modal .mermaid svg {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    height: auto !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  /* mermaid sequence-diagram label tweaks for dark theme */
+  #sysdeck-modal .mermaid .messageText { font-family: 'JetBrains Mono', monospace !important; fill: var(--text) !important; }
+  #sysdeck-modal .mermaid .actor { stroke: var(--cyan) !important; }
+  #sysdeck-modal .mermaid .actor-line { stroke: var(--border) !important; }
+  #sysdeck-modal .mermaid .noteText { fill: var(--text) !important; }
+  #sysdeck-modal .mermaid .labelText, #sysdeck-modal .mermaid .loopText { fill: var(--text) !important; }
+  #sysdeck-modal .mermaid rect.actor { fill: var(--card) !important; }
+
+  /* chrome — fixed-positioned, lives outside the modal */
+  .sysdeck-nav {
+    position: fixed; top: 50%; transform: translateY(-50%); z-index: 201;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    color: #64748b; width: 2.4rem; height: 2.4rem;
+    border-radius: .4rem; cursor: pointer; font-size: 1rem;
+    display: none; align-items: center; justify-content: center;
+    transition: color .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  .sysdeck-nav.visible { display: flex; }
+  .sysdeck-nav:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
+  #sysdeck-prev { left: .6rem; }
+  #sysdeck-next { right: .6rem; }
+  .sysdeck-close-btn {
+    position: fixed; top: .7rem; left: .9rem; z-index: 201;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    color: #64748b; padding: .35rem .75rem; border-radius: .4rem;
+    cursor: pointer; font-size: .72rem; font-family: 'Inter', sans-serif;
+    display: none; align-items: center; gap: .3rem;
+    transition: color .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  .sysdeck-close-btn.visible { display: flex; }
+  .sysdeck-close-btn:hover { color: #06b6d4; border-color: rgba(8,145,178,.3); }
+  .sysdeck-counter { position: fixed; bottom: .8rem; right: 1rem; z-index: 201; font-size: .72rem; color: #64748b; font-family: 'Inter', sans-serif; display: none; }
+  .sysdeck-counter.visible { display: block; }
+  .sysdeck-progress { position: fixed; bottom: 0; left: 0; right: 0; z-index: 201; height: 3px; background: rgba(30,41,59,.6); display: none; }
+  .sysdeck-progress.visible { display: block; }
+  .sysdeck-progress-fill { height: 100%; background: linear-gradient(90deg,#06b6d4,#0e7490); transition: width .3s ease; }
+  .sysdeck-hint { position: fixed; bottom: .9rem; left: 50%; transform: translateX(-50%); z-index: 201; font-size: .62rem; color: #475569; font-family: 'Inter', sans-serif; pointer-events: none; display: none; }
+  .sysdeck-hint.visible { display: block; }
+  .sysdeck-deck-label {
+    position: fixed; top: .7rem; left: 50%; transform: translateX(-50%); z-index: 201;
+    font-size: .68rem; color: #94a3b8; font-family: 'Inter', sans-serif;
+    background: rgba(15,23,42,.8); border: 1px solid #1e293b;
+    padding: .3rem .75rem; border-radius: .4rem;
+    display: none; backdrop-filter: blur(8px);
+    letter-spacing: .04em;
+  }
+  .sysdeck-deck-label.visible { display: block; }
+  .sysdeck-deck-label .c-cyan { color: #06b6d4; font-weight: 600; }
+
+  /* System Designs section cards (in main portfolio) */
+  .sysd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+  .sysd-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg));
+    border: 1px solid var(--border);
+    border-radius: 1rem; padding: 0.25rem;
+    cursor: pointer; text-decoration: none; display: block;
+    transition: border-color .25s, transform .25s;
+  }
+  .sysd-card:hover { border-color: rgba(6,182,212,0.35); transform: translateY(-2px); }
+  .sysd-card-inner { background: var(--bg-card); border-radius: 0.875rem; padding: 1.5rem; height: 100%; }
+  .sysd-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .sysd-tag {
+    padding: 0.2rem 0.65rem; border-radius: 9999px;
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .sysd-tag-cyan   { background: var(--cyan-bg); border: 1px solid var(--cyan-bd); color: var(--cyan); }
+  .sysd-tag-blue   { background: var(--blue-bg); border: 1px solid var(--blue-bd); color: var(--blue); }
+  .sysd-tag-purple { background: rgba(167,139,250,.15); border: 1px solid rgba(167,139,250,.3); color: var(--purple); }
+  .sysd-tag-green  { background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.3); color: var(--green); }
+  .sysd-tag-orange { background: rgba(251,146,60,.12); border: 1px solid rgba(251,146,60,.3); color: var(--orange); }
+  .sysd-title { font-size: 1.2rem; font-weight: 800; color: var(--white); margin-bottom: 0.5rem; }
+  .sysd-desc { color: var(--text-dim); font-size: 0.9rem; line-height: 1.65; }
+  .sysd-meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted); }
+  .sysd-meta strong { color: var(--cyan); font-weight: 600; }
+  .sysd-cta {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: var(--cyan); font-size: 0.85rem; font-weight: 600;
+    margin-top: 1rem;
+  }
+  .sysd-cta svg { width: 1rem; height: 1rem; }
   </style>
 </head>
 <body>
@@ -569,6 +807,7 @@
       <button onclick="scrollTo('skills')"   id="nav-skills">Skills</button>
       <button onclick="scrollTo('experience')" id="nav-experience">Experience</button>
       <button onclick="scrollTo('projects')"    id="nav-projects">Projects</button>
+      <button onclick="scrollTo('system-designs')" id="nav-system-designs">Systems</button>
       <button onclick="scrollTo('talks')"       id="nav-talks">Talks</button>
     </div>
   </div>
@@ -829,6 +1068,124 @@
           </li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <!-- SYSTEM DESIGNS -->
+  <section id="system-designs">
+    <h2 class="section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <polyline points="2 17 12 22 22 17"/>
+        <polyline points="2 12 12 17 22 12"/>
+      </svg>
+      System Designs
+    </h2>
+    <p style="color:var(--text-dim);font-size:1rem;line-height:1.7;max-width:48rem;margin-bottom:2rem;">
+      Real production systems I've architected and shipped — each card opens an interactive sequence diagram walking through the request flow, design tradeoffs, and outcomes.
+    </p>
+    <div class="sysd-grid">
+
+      <a href="#" onclick="event.preventDefault();openSysDeck('qoala-bulk')" class="sysd-card">
+        <div class="sysd-card-inner">
+          <div class="sysd-tags">
+            <span class="sysd-tag sysd-tag-cyan">Event-Driven</span>
+            <span class="sysd-tag sysd-tag-blue">Qoala × Zurich</span>
+          </div>
+          <div class="sysd-title">Bulk Policy Ingestion V2</div>
+          <p class="sysd-desc">Excel upload → S3 event → Lambda parse → SQS fan-out → consumer cluster with 5 goroutines per message (product-svc, agent-svc, DB, PDF). 20K rows e2e in ~1 hour at golden-hour BAU.</p>
+          <div class="sysd-meta">
+            <span><strong>20K</strong> rows / ~1 hour</span>
+            <span><strong>40K+</strong> active policies</span>
+            <span><strong>5×</strong> fan-out per msg</span>
+          </div>
+          <div class="sysd-cta">
+            View Sequence Diagram
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" onclick="event.preventDefault();openSysDeck('paper-ocr')" class="sysd-card">
+        <div class="sysd-card-inner">
+          <div class="sysd-tags">
+            <span class="sysd-tag sysd-tag-cyan">Dual-Entry</span>
+            <span class="sysd-tag sysd-tag-blue">Paper.id · Fintech</span>
+          </div>
+          <div class="sysd-title">OCR Invoice System V2</div>
+          <p class="sysd-desc">Email + form bulk-upload feed the same pipeline — in-house OCR engine (Gemini-wrapped), per-client config mapping, multi-layer approval, bulk payment, dual-ERP sync. Slack thread per bundle for live ops visibility.</p>
+          <div class="sysd-meta">
+            <span><strong>1,000+</strong> daily emails</span>
+            <span><strong>99%</strong> success rate</span>
+            <span><strong>SAP HANA + Xero</strong></span>
+          </div>
+          <div class="sysd-cta">
+            View Sequence Diagram
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" onclick="event.preventDefault();openSysDeck('baliklayar')" class="sysd-card">
+        <div class="sysd-card-inner">
+          <div class="sysd-tags">
+            <span class="sysd-tag sysd-tag-purple">Async + Multi-Vendor</span>
+            <span class="sysd-tag sysd-tag-green">Baliklayar.AI · SaaS</span>
+          </div>
+          <div class="sysd-title">Multi-Model AI Rendering Pipeline</div>
+          <p class="sysd-desc">7+ AI engines (Veo, Kling, Imagen, Gemini, plus alt providers) on Scheduler-driven async polling. Atomic credit deduct with vendor-failure refund. Vendor router for Motion. Webhook idempotency via <code>paid_at</code> gate.</p>
+          <div class="sysd-meta">
+            <span><strong>7+</strong> engines</span>
+            <span><strong>300+</strong> videos · ~2.4 GB</span>
+            <span><strong>~300</strong> DAU peak</span>
+          </div>
+          <div class="sysd-cta">
+            View Sequence Diagram
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" onclick="event.preventDefault();openSysDeck('wc2026')" class="sysd-card">
+        <div class="sysd-card-inner">
+          <div class="sysd-tags">
+            <span class="sysd-tag sysd-tag-purple">Multi-LLM Consensus</span>
+            <span class="sysd-tag sysd-tag-green">Personal Project</span>
+          </div>
+          <div class="sysd-title">WC2026 Prediction Pipeline</div>
+          <p class="sysd-desc">4-stage Python pipeline over an Elo/Poisson/xG statistical baseline augmented by multi-LLM consensus (Claude Opus + Sonnet + Gemini). Concurrency-safe with sliding-window RPM limiter, retry, and knockout-aware branch. Post-round back-analysis feeds ranked upgrades into next run.</p>
+          <div class="sysd-meta">
+            <span><strong>#1</strong> Indonesia country-wide</span>
+            <span><strong>Top 1%</strong> global percentile</span>
+            <span><strong>3</strong> group-stage rounds</span>
+          </div>
+          <div class="sysd-cta">
+            View Sequence Diagrams
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" onclick="event.preventDefault();openSysDeck('rts-tokopedia')" class="sysd-card">
+        <div class="sysd-card-inner">
+          <div class="sysd-tags">
+            <span class="sysd-tag sysd-tag-orange">Secure Middleware</span>
+            <span class="sysd-tag sysd-tag-blue">Tokopedia · E-commerce</span>
+          </div>
+          <div class="sysd-title">RTS.id × Tokopedia Biller Integration</div>
+          <p class="sysd-desc">Encrypted middleware bridging Tokopedia and Telkomsel airtime billing — meeting Tokopedia's strict security standards.</p>
+          <div class="sysd-meta">
+            <span><strong>E2E</strong> encrypted</span>
+            <span><strong>High-vol</strong> airtime</span>
+            <span><strong>Settlement</strong> sync</span>
+          </div>
+          <div class="sysd-cta">
+            View Sequence Diagram
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
     </div>
   </section>
 
@@ -1507,6 +1864,913 @@
   </div><!-- /stage -->
 </div><!-- /#sdeck-modal -->
 
+<!-- ══════════════════════════════════════════════
+     SYSTEM DESIGN DECK MODAL — 4 decks, one container
+══════════════════════════════════════════════ -->
+<div id="sysdeck-modal">
+  <div class="stage">
+
+    <!-- ══════════════════════════════════════════════
+         DECK 1 · QOALA BULK POLICY INGESTION V2
+    ══════════════════════════════════════════════ -->
+    <div class="sysdeck-deck" data-deck="qoala-bulk">
+
+      <!-- 01 · Cover -->
+      <div class="slide active">
+        <div class="slide-label">Insurtech · Qoala × Zurich</div>
+        <h1>Bulk Policy<br/><span class="c-cyan">Ingestion V2</span></h1>
+        <div class="divider"></div>
+        <p style="max-width:30em;color:var(--text);">
+          The <strong class="c-white">Zurich team</strong> uploads Excel batches representing loan-linked policies.
+          Parsing has to leave the request path so the dashboard never blocks,
+          and downstream work has to fan out hard enough to clear <strong class="c-white">20K rows in ~1 hour</strong>
+          at golden-hour BAU traffic.
+        </p>
+        <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+          <span class="pill pill-cyan">Event-Driven</span>
+          <span class="pill pill-purple">S3 → Lambda → SQS</span>
+          <span class="pill pill-green">Goroutine Fan-Out</span>
+        </div>
+        <p class="mt2" style="font-size:.55em;color:var(--muted);">Zurich Insurance Group · 40K+ active policies in production</p>
+      </div>
+
+      <!-- 02 · Sequence Diagram -->
+      <div class="slide">
+        <div class="slide-label">Request flow</div>
+        <h2>Pipeline <span class="c-cyan">Sequence</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant Z as Zurich Ops
+  participant API as Upload API
+  participant S3 as S3 Bucket
+  participant L as Lambda Parser
+  participant SQS as AWS SQS
+  participant C as Consumer (cluster)
+  participant P as product-service
+  participant A as agent-service
+  participant DB as PostgreSQL
+  Z->>API: POST /bulk/upload (.xlsx)
+  API->>S3: PutObject(file)
+  API-->>Z: 202 Accepted
+  Note over S3,L: S3 event → Lambda invoke
+  S3->>L: ObjectCreated event
+  activate L
+  L->>L: Parse Excel into row bundle
+  L->>SQS: Publish rows (fan-out msgs)
+  deactivate L
+  Note over SQS,C: Cluster auto-spawns N consumer instances
+  loop Per SQS message
+    C->>SQS: Receive
+    activate C
+    Note right of C: 5 fan-out goroutines per message
+    par Get product + premium
+      C->>P: GetProduct + calc premium
+      P-->>C: Premium + product meta
+    and Lookup agent
+      C->>A: Get agent (from row input)
+      A-->>C: Agent details
+    and Persist policy
+      C->>DB: Insert policy row
+    and Generate policy PDF
+      C->>C: Render PDF document
+    end
+    C->>SQS: Ack
+    deactivate C
+  end
+  Note over Z,DB: 20K rows end-to-end in ~1 hour (golden-hour BAU)
+        </div>
+      </div>
+
+      <!-- 03 · Design Decisions -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs</div>
+        <h2>Why this <span class="c-cyan">shape</span>?</h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">Parsing offloaded to S3-event Lambda</div>
+              <div class="feat-desc">Upload API doesn't block on Excel parsing. File lands in S3, Lambda picks up the event — API returns 202 in milliseconds so the dashboard never times out on a 20K-row file.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">SQS as elastic backpressure</div>
+              <div class="feat-desc">Lambda dumps the full row bundle into SQS. Consumer cluster reads at its own pace; traffic spikes turn into queue depth, not failed requests — parser throughput stays decoupled from consumer throughput.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-purple">
+              <div class="feat-title c-purple">5 fan-out goroutines per message</div>
+              <div class="feat-desc">Each row triggers concurrent work — <code>product-service</code> for premium calc, <code>agent-service</code> for agent resolution, DB writes, PDF generation. Per-row I/O parallelism collapses serial wait time.</div>
+            </div>
+            <div class="card card-green mt">
+              <div class="feat-title c-green">Stateless consumer cluster</div>
+              <div class="feat-desc">Any instance can pick up any message. Cluster scales horizontally on SQS depth without sticky routing — no ops intervention during the upload peak.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 · Outcomes -->
+      <div class="slide">
+        <div class="slide-label">In production today</div>
+        <h2>Outcomes &amp; <span class="c-cyan">Numbers</span></h2>
+        <div class="divider"></div>
+        <div class="stat-row mt">
+          <div class="stat-cell"><div class="bignum c-cyan">20K</div><div class="bignote">rows / ~1 hour e2e</div></div>
+          <div class="stat-cell"><div class="bignum c-green">40K+</div><div class="bignote">active policies</div></div>
+          <div class="stat-cell"><div class="bignum c-blue">5×</div><div class="bignote">fan-out per msg</div></div>
+          <div class="stat-cell"><div class="bignum c-purple">202</div><div class="bignote">instant ack to client</div></div>
+        </div>
+        <ul class="checks mt2">
+          <li>End-to-end 20K rows in ~1 hour at golden-hour BAU</li>
+          <li>API returns 202 in milliseconds regardless of file size — parsing is async via S3 event</li>
+          <li>Powers Zurich Insurance Group integration with 40K+ active policies live</li>
+        </ul>
+      </div>
+
+    </div><!-- /qoala-bulk -->
+
+    <!-- ══════════════════════════════════════════════
+         DECK 2 · PAPER.ID OCR INVOICE V2
+    ══════════════════════════════════════════════ -->
+    <div class="sysdeck-deck" data-deck="paper-ocr">
+
+      <!-- 01 · Cover -->
+      <div class="slide active">
+        <div class="slide-label">Fintech · Paper.id</div>
+        <h1>OCR Invoice<br/><span class="c-cyan">System V2</span></h1>
+        <div class="divider"></div>
+        <p style="max-width:32em;color:var(--text);">
+          Invoices flow in through <strong class="c-white">two entry points</strong> —
+          email attachments and bulk dashboard upload — and ride the same pipeline:
+          OCR → per-client config-based mapping → invoice → multi-layer approval →
+          bulk payment → dual-ERP sync. Operations watch every document live in Slack.
+        </p>
+        <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+          <span class="pill pill-cyan">Dual Entry</span>
+          <span class="pill pill-purple">Config-Driven</span>
+          <span class="pill pill-green">Realtime Ops</span>
+        </div>
+        <p class="mt2" style="font-size:.55em;color:var(--muted);">Dual ERP: SAP HANA + Xero · Underpinned consecutive quarterly TPV All-Time Highs</p>
+      </div>
+
+      <!-- 02 · Sequence Diagram — Email Path -->
+      <div class="slide">
+        <div class="slide-label">Entry path A · Email</div>
+        <h2>Email <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant S as Email Sender
+  participant PS as Email Pubsub
+  participant IG as Ingestion Svc
+  participant Q as Message Queue
+  participant W as OCR Worker
+  participant OE as In-house OCR Engine
+  participant IV as Invoice Svc
+  participant AP as Approval Engine
+  participant PY as Bulk Payment
+  participant ERP as ERP Sync
+  S->>PS: Email + invoice attachments
+  Note over PS: Filter by sender → resolve client org
+  PS->>IG: Forward email (as-is)
+  IG->>Q: Publish (1 document = 1 message)
+  Note over Q,W: Consume per-document, async
+  loop Per document
+    W->>Q: Dequeue
+    activate W
+    W->>W: Load client config
+    W->>OE: Extract data (Gemini-wrapped)
+    OE-->>W: Raw JSON
+    W->>W: Map raw → invoice (config-based)
+    W->>IV: Create invoice
+    deactivate W
+  end
+  IV->>AP: Trigger approval chain
+  Note over AP: Multi-layer until top management approves
+  AP->>PY: Fire payment (bulk, multi-vendor)
+  PY-->>S: Notify sender (paid)
+  PY->>ERP: Sync to client ERP (SAP HANA / Xero)
+        </div>
+      </div>
+
+      <!-- 03 · Sequence Diagram — Form Path -->
+      <div class="slide">
+        <div class="slide-label">Entry path B · Dashboard form</div>
+        <h2>Form <span class="c-cyan">Bulk Upload</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant U as User
+  participant D as Dashboard
+  participant API as Upload API
+  participant BG as Background Processor
+  participant OE as In-house OCR Engine
+  participant IV as Invoice Svc
+  participant AP as Approval Engine
+  U->>D: Bulk-upload files (form)
+  D->>API: Submit job
+  API-->>D: Job accepted → close modal
+  Note over D,BG: Background processes asynchronously
+  loop Per file
+    BG->>BG: Load client config
+    BG->>OE: Extract → raw JSON
+    OE-->>BG: Raw data
+    BG->>BG: Map raw → invoice
+    alt OCR + mapping OK
+      BG->>IV: Create invoice
+      BG->>AP: Trigger approval (notify boss)
+    else Failure
+      BG->>D: Mark file failed
+    end
+    BG->>D: Update progress (x / n, %)
+  end
+  D-->>U: Show per-file result grid
+  alt User retries failed file
+    U->>D: Reupload as NEW session
+    Note over D: Failed files run as separate job — never auto-poison original
+  end
+        </div>
+      </div>
+
+      <!-- 04 · Sequence Diagram — Slack Observability -->
+      <div class="slide">
+        <div class="slide-label">Realtime observability</div>
+        <h2>Slack <span class="c-cyan">Thread Story</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant W as OCR Worker
+  participant SL as Slack Channel
+  participant OP as Ops Team
+  W->>SL: Post root message (1 email bundle = 1 thread)
+  SL-->>W: thread_ts
+  loop Per document in bundle
+    W->>SL: Reply: ingest received
+    W->>SL: Reply: OCR done
+    W->>SL: Reply: mapping done
+    W->>SL: Reply: invoice created
+  end
+  alt Failure mid-process
+    W->>SL: Reply: ❌ failure + reason
+    SL->>OP: Alert ops-team
+    Note over OP: Ops decides — ticket sender OR self-handle
+  end
+  Note over SL: Everyone watches the full pipeline live in one thread
+        </div>
+      </div>
+
+      <!-- 05 · Design Decisions -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs</div>
+        <h2>Why this <span class="c-cyan">shape</span>?</h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">1 document = 1 queue message</div>
+              <div class="feat-desc">Per-document granularity means one bad attachment can't poison the bundle. Each doc is independently retryable, observable, and routable.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">Config-based raw → invoice mapping</div>
+              <div class="feat-desc">Per-client config decides how OCR's raw output maps to invoice fields. Onboarding a new client = drop a config, not redeploy code.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-purple">
+              <div class="feat-title c-purple">In-house OCR wrapping Gemini</div>
+              <div class="feat-desc">Owning the OCR layer lets the data-science team swap models, tune prompts, and add post-processing without disturbing upstream Ingestion or downstream Invoice contracts.</div>
+            </div>
+            <div class="card card-green mt">
+              <div class="feat-title c-green">Slack thread per email bundle</div>
+              <div class="feat-desc">Bundle = root message, per-doc state = reply chain. Ops sees the full pipeline live without a dashboard; failures auto-alert in the same thread with full context.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 · Outcomes -->
+      <div class="slide">
+        <div class="slide-label">In production</div>
+        <h2>Outcomes &amp; <span class="c-cyan">Numbers</span></h2>
+        <div class="divider"></div>
+        <div class="stat-row mt">
+          <div class="stat-cell"><div class="bignum c-cyan">1,000+</div><div class="bignote">daily emails</div></div>
+          <div class="stat-cell"><div class="bignum c-green">99%</div><div class="bignote">processing success</div></div>
+          <div class="stat-cell"><div class="bignum c-blue">2-way</div><div class="bignote">entry (email + form)</div></div>
+          <div class="stat-cell"><div class="bignum c-purple">2 ERP</div><div class="bignote">SAP HANA + Xero</div></div>
+        </div>
+        <ul class="checks mt2">
+          <li>End-to-end pipeline: ingest → OCR → mapping → invoice → multi-layer approval → bulk payment → ERP sync</li>
+          <li>Per-client config means new clients onboard without code deploys</li>
+          <li>Live ops visibility via per-bundle Slack thread — failures surface in context, not in a separate dashboard</li>
+          <li>Powered Paper.id's consecutive quarterly TPV All-Time Highs</li>
+        </ul>
+      </div>
+
+    </div><!-- /paper-ocr -->
+
+    <!-- ══════════════════════════════════════════════
+         DECK 3 · BALIKLAYAR.AI — MULTI-MODEL AI RENDERING
+    ══════════════════════════════════════════════ -->
+    <div class="sysdeck-deck" data-deck="baliklayar">
+
+      <!-- 01 · Cover -->
+      <div class="slide active">
+        <div class="slide-label">AI Platform · Baliklayar.AI</div>
+        <h1>Multi-Model<br/><span class="c-cyan">AI Rendering</span></h1>
+        <div class="divider"></div>
+        <p style="max-width:32em;color:var(--text);">
+          <strong class="c-white">7+ AI engines</strong> — Veo, Kling, Imagen, Gemini, and alt providers — under one credit system.
+          Every render is async (30s–3min vendor latency) and any vendor can fail.
+          Architecture has to keep users non-blocked, refund on vendor failure, and survive upstream flakiness.
+        </p>
+        <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+          <span class="pill pill-cyan">Async Polling</span>
+          <span class="pill pill-purple">Multi-Vendor</span>
+          <span class="pill pill-green">Atomic Refund</span>
+        </div>
+        <p class="mt2" style="font-size:.55em;color:var(--muted);">Co-founded · 2-person team · entire codebase shipped via Claude Code-driven engineering</p>
+      </div>
+
+      <!-- 02 · Sequence Diagram — Canonical submit + async vendor poll -->
+      <div class="slide">
+        <div class="slide-label">Foundational pattern</div>
+        <h2>Submit &amp; <span class="c-cyan">Async Poll</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as Frontend
+  participant BE as Backend API
+  participant V as Vendor (Veo / Kling)
+  participant DB as PostgreSQL
+  participant S as Scheduler (cron 1m)
+  participant OS as Object Store
+  Note over U,DB: Submit — synchronous, returns instantly
+  U->>FE: Upload image + prompt, pick engine
+  FE->>BE: POST /video/submit
+  Note over BE: Atomic credit deduction
+  BE->>DB: UPDATE users SET credits -= N
+  BE->>DB: INSERT credit_transactions (deduct)
+  BE->>V: Submit task
+  V-->>BE: vendor_task_id
+  BE->>DB: INSERT video_tasks (status=submitted)
+  BE-->>FE: 201 {task_id}
+  Note over FE,BE: FE polls our DB — never the vendor
+  loop Every 10s until terminal
+    FE->>BE: GET /video/status/:id
+    BE->>DB: SELECT video_tasks
+    BE-->>FE: {status, video_url?}
+  end
+  Note over S,OS: Background — Scheduler drains per-engine queue
+  S->>BE: POST /admin/poll/<engine>
+  loop Each pending task
+    BE->>V: GET status
+    alt Completed
+      V-->>BE: result URL
+      BE->>V: Download (streamed)
+      BE->>OS: Upload videos/{userID}/{uuid}.mp4
+      BE->>DB: UPDATE status=completed, video_url=OS_url
+    else Failed
+      BE->>DB: AddCredits (refund) + INSERT transaction
+      BE->>DB: UPDATE status=failed
+    end
+  end
+        </div>
+      </div>
+
+      <!-- 03 · Sequence Diagram — Motion Control vendor router -->
+      <div class="slide">
+        <div class="slide-label">Smart routing</div>
+        <h2>Motion <span class="c-cyan">Vendor Router</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant BE as Backend (motion svc)
+  participant R as Vendor Router
+  participant VA as Vendor A
+  participant VB as Vendor B
+  participant DB as PostgreSQL
+  participant S as Scheduler
+  participant OS as Object Store
+  U->>BE: POST /motion/submit (photo + ref video)
+  Note over BE: Enforce shared daily cap<br/>Cost = per-sec × ref duration
+  BE->>DB: Atomic deduct credits
+  BE->>OS: Upload photo + ref video
+  BE->>R: Pick vendor (env-driven)
+  alt MOTION_VENDOR = auto
+    Note over R: Route by ref-video duration
+    alt duration < crossover threshold
+      R->>VA: Submit (byte-upload OK)
+    else duration ≥ threshold
+      R->>VB: Submit (URL-only)
+    end
+  else Explicit vendor
+    R->>VA: Submit
+  end
+  BE->>DB: INSERT motion_tasks (vendor, status=submitted)
+  BE-->>U: 201 {task_id}
+  S->>BE: POST /admin/poll/motion
+  loop Each pending
+    BE->>VA: GET status
+    alt Completed
+      Note over BE: SSRF guard — vendor host allowlist<br/>Race-guarded download claim via DB
+      BE->>VA: Download result (120s timeout)
+      BE->>OS: Upload videos/{userID}/{uuid}.mp4
+      BE->>DB: UPDATE status=completed
+    else Vendor OK, download fails
+      Note over BE: Retry within giveup window<br/>(no refund — vendor succeeded)
+    else Vendor failure
+      BE->>DB: Refund + UPDATE status=failed
+    end
+  end
+        </div>
+      </div>
+
+      <!-- 04 · Sequence Diagram — Freeform multi-model dispatcher -->
+      <div class="slide">
+        <div class="slide-label">7 engines, 1 endpoint</div>
+        <h2>Freeform <span class="c-cyan">Dispatcher</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant FE as Frontend
+  participant BE as Backend (freeform svc)
+  participant D as Model Dispatcher
+  participant KE as Kling API
+  participant VP as Vendor Proxy
+  participant DB as PostgreSQL
+  U->>FE: Pick model + mode + duration + prompt
+  FE->>BE: POST /freeform/submit (multipart)
+  Note over BE: Validate model ∈ {7 paths}<br/>Validate duration per model<br/>Max 3 in-flight per user
+  Note over BE: Cost = per-sec × duration OR flat<br/>(admin-configurable in system_configs)
+  BE->>DB: Atomic deduct credits
+  BE->>D: route(model, mode)
+  alt model = kling / kling26
+    D->>KE: Submit (direct)
+  else model = seedance / seedance_omni
+    D->>VP: Seedance route
+  else model = veo_lite / omni_flash
+    D->>VP: Veo route
+  else model = kling_motion
+    D->>VP: Kling Motion route
+  end
+  KE-->>BE: vendor_task_id
+  VP-->>BE: vendor_task_id
+  BE->>DB: INSERT freeform_tasks (model, mode, status=submitted)
+  BE-->>FE: 201 {task_id, credits_used}
+  Note over FE: FE polls every 5s — same drain pattern as canonical
+        </div>
+      </div>
+
+      <!-- 05 · Design Decisions -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs</div>
+        <h2>Why this <span class="c-cyan">shape</span>?</h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">Scheduler-driven polling, never user-blocking</div>
+              <div class="feat-desc">User-facing API returns 201 in ms after submit. Vendor latency (30s–3min) absorbed by Scheduler ticks polling per-engine queues. FE polls our DB, never the vendor.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">Atomic deduct → refund on vendor failure</div>
+              <div class="feat-desc">Credits subtract at submit (atomic UPDATE). On vendor failure path: <code>AddCredits</code> + <code>INSERT credit_transactions(type=refund)</code>. No orphaned charges, no manual reconciliation.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-purple">
+              <div class="feat-title c-purple">Env-driven vendor router for Motion</div>
+              <div class="feat-desc">Two vendors with different sweet spots (short vs long reference videos). Auto-mode routes by duration crossover so each vendor gets the workload it actually serves best.</div>
+            </div>
+            <div class="card card-green mt">
+              <div class="feat-title c-green">Webhook idempotency via <code>paid_at</code> gate</div>
+              <div class="feat-desc">Payment Gateway webhook: HMAC verify → BEGIN tx → topup + tier upgrade + referral bonus (<code>UPDATE referrals SET paid_at = NOW()</code>) → COMMIT. Replays no-op via <code>paid_at IS NOT NULL</code>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 · Outcomes -->
+      <div class="slide">
+        <div class="slide-label">In production</div>
+        <h2>Outcomes &amp; <span class="c-cyan">Numbers</span></h2>
+        <div class="divider"></div>
+        <div class="stat-row mt">
+          <div class="stat-cell"><div class="bignum c-cyan">400+</div><div class="bignote">registered users</div></div>
+          <div class="stat-cell"><div class="bignum c-green">3,800+</div><div class="bignote">transactions</div></div>
+          <div class="stat-cell"><div class="bignum c-blue">300+</div><div class="bignote">videos (~2.4 GB)</div></div>
+          <div class="stat-cell"><div class="bignum c-purple">~300</div><div class="bignote">DAU peak</div></div>
+        </div>
+        <ul class="checks mt2">
+          <li>7+ AI engines integrated under one credit + refund system</li>
+          <li>Async submit + Scheduler-drain across every render path — users never block on vendor latency</li>
+          <li>Atomic credit deduct with vendor-failure refund — zero charge disputes</li>
+          <li>Telegram alerts batched + fingerprint-deduped for ops visibility on hanging jobs</li>
+          <li>Co-founded, 2-person team — entire codebase shipped via Claude Code-driven engineering</li>
+        </ul>
+      </div>
+
+    </div><!-- /baliklayar -->
+
+    <!-- ══════════════════════════════════════════════
+         DECK · WC2026 PREDICTION PIPELINE
+    ══════════════════════════════════════════════ -->
+    <div class="sysdeck-deck" data-deck="wc2026">
+
+      <!-- 01 · Cover -->
+      <div class="slide active">
+        <div class="slide-label">Personal Project · FIFA WC2026</div>
+        <h1>WC2026<br/><span class="c-cyan">Prediction Pipeline</span></h1>
+        <div class="divider"></div>
+        <p style="max-width:32em;color:var(--text);">
+          <strong class="c-white">72 group-stage fixtures</strong> need scoreline predictions across 3 rounds.
+          Statistical baseline (Elo + Poisson + xG) meets <strong class="c-white">multi-LLM consensus</strong>
+          (Claude Opus + Sonnet + Gemini), reconciled via majority-vote synthesis and iterative back-analysis.
+          Result: <strong class="c-cyan">#1 country-wide in Indonesia</strong> and
+          <strong class="c-cyan">top 1% global percentile</strong> on SuperBru.
+        </p>
+        <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+          <span class="pill pill-cyan">Multi-LLM Consensus</span>
+          <span class="pill pill-purple">Concurrency + RPM</span>
+          <span class="pill pill-green">Iterative Learning</span>
+        </div>
+        <p class="mt2" style="font-size:.55em;color:var(--muted);">Personal side project · pipeline architecture + tuning · Python + LLM CLI subprocess</p>
+      </div>
+
+      <!-- 02 · Glossary -->
+      <div class="slide">
+        <div class="slide-label">Read this first</div>
+        <h2>Terminology <span class="c-cyan">Legend</span></h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">xG · Expected Goals</div>
+              <div class="feat-desc">Model estimate of goal output based on chance quality, not actual scored. Pipeline uses <code>Elo win-prob × tournament baseline</code> (2.5 group / 2.1 knockout) as prospective xG.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">Poisson · draw probability</div>
+              <div class="feat-desc">Statistical distribution assuming goal independence. Yields draw likelihood from expected goals — known to undercount defensive group-stage clustering.</div>
+            </div>
+            <div class="card card-purple mt">
+              <div class="feat-title c-purple">Elo · team rating</div>
+              <div class="feat-desc">Zero-sum team-strength number; higher = stronger. Rating difference maps to win probability via a logistic curve. Backbone of the baseline model.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-green">
+              <div class="feat-title c-green">H2H · Head-to-Head</div>
+              <div class="feat-desc">Historical record between two nations, split by World-Cup-only vs full all-time. Feeds LLM prompt as prior context.</div>
+            </div>
+            <div class="card card-orange mt">
+              <div class="feat-title c-orange">gpm · Goals per Match</div>
+              <div class="feat-desc">Recent-form scoring rate over the team's last 10 matches. Flags low-scoring form ("park the bus" risk).</div>
+            </div>
+            <div class="card mt">
+              <div class="feat-title c-white">RPM · Requests per Minute</div>
+              <div class="feat-desc">LLM API rate limit. Sliding-window enforcer keeps calls under free-tier ceiling (13/60s vs 15 hard limit).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 · Sequence — 4-stage pipeline overview -->
+      <div class="slide">
+        <div class="slide-label">End-to-end flow</div>
+        <h2>4-Stage <span class="c-cyan">Pipeline</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor Op as Operator
+  participant S0 as Stage 0 · Baseline
+  participant S1 as Stage 1 · LLM Augmenter
+  participant S2 as Stage 2 · Populator
+  participant S3 as Stage 3 · Renderer
+  participant FS as Filesystem
+  Op->>S0: Load Elo + FIFA + recent matches + H2H
+  activate S0
+  S0->>S0: xG · Poisson W/D/L · verdict · confidence
+  S0->>FS: predictions_v2.json
+  deactivate S0
+  Op->>S1: Kick off LLM augmentation
+  activate S1
+  S1->>FS: Load v2 + H2H + confederations
+  S1->>S1: Build risk-indicator payload<br/>(draw / host / upset / conf-bias)
+  Note over S1: Concurrent LLM calls · 3 workers · 13 RPM · retry 3×
+  S1->>FS: predictions_multi_v3.json (per-model)
+  deactivate S1
+  Op->>S2: Consolidate
+  activate S2
+  S2->>FS: Load multi_v3
+  S2->>S2: Synthesize consensus<br/>(vote + tiebreaker Opus>Sonnet>Haiku)
+  S2->>FS: populated_data.json + markdown export
+  deactivate S2
+  Op->>S3: Render
+  activate S3
+  S3->>FS: Load populated_data
+  S3->>S3: Patch dashboard.html in-place<br/>(predictions array + model badge + prose)
+  S3->>FS: dashboard.html (updated)
+  deactivate S3
+        </div>
+      </div>
+
+      <!-- 04 · Data Pipeline Flow -->
+      <div class="slide">
+        <div class="slide-label">From raw JSON to consensus</div>
+        <h2>Data <span class="c-cyan">Pipeline</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+flowchart TB
+  subgraph Ing["1 · Ingestion (6 raw sources)"]
+    direction LR
+    S1[Elo ratings]
+    S2[FIFA rankings<br/>+ confederations]
+    S3[Recent matches<br/>last 10 per team]
+    S4[H2H history]
+    S5[964 WC matches<br/>1930–2022]
+    S6[Groups + fixtures]
+  end
+  subgraph Enr["2 · Enrichment (derive features)"]
+    direction LR
+    F[Form aggregator<br/>gpm · W/D/L string]
+    Rk[Risk indicators<br/>draw · host · upset · conf-bias]
+  end
+  subgraph Base["3 · Statistical baseline"]
+    direction LR
+    Elo[Elo prob<br/>logistic]
+    Poi[Poisson<br/>draw prob]
+    XG[xG · base 2.5 group<br/>2.1 knockout]
+    Verd[Verdict +<br/>confidence tier]
+  end
+  subgraph LLM["4 · Multi-LLM augmentation"]
+    direction LR
+    Pay[Structured payload<br/>strength + form + H2H<br/>+ baseline + risk]
+    Cl[Claude Opus 4.7<br/>+ Sonnet 4.6]
+    Ge[Gemini 3.5 Flash]
+  end
+  subgraph Syn["5 · Consensus synthesis"]
+    direction LR
+    V[Vote + tiebreaker<br/>Opus &gt; Sonnet &gt; Haiku]
+    Av[Score-filtered avg<br/>consensus-winner votes only]
+  end
+  Out[(populated_data.json<br/>→ dashboard.html)]
+  Ing --> Enr
+  Ing --> Base
+  Enr --> Base
+  Base --> LLM
+  Enr --> LLM
+  Ing --> LLM
+  LLM --> Syn
+  Syn --> Out
+        </div>
+      </div>
+
+      <!-- 05 · Sequence — LLM concurrency + RPM limiter -->
+      <div class="slide">
+        <div class="slide-label">Concurrency layer</div>
+        <h2>Rate-Limited <span class="c-cyan">LLM Calls</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant W as Predict Worker
+  participant Sem as Semaphore (cap 3)
+  participant RL as Sliding-window RPM (cap 13/60s)
+  participant CLI as LLM CLI subprocess
+  participant N as JSON Normalizer
+  loop Per fixture × per model
+    W->>Sem: acquire()
+    W->>RL: _wait_rate_slot()
+    Note over RL: Prune timestamps > 60s old<br/>If deque size < 13 → append + return<br/>Else sleep until oldest expires
+    W->>CLI: system prompt + payload via stdin
+    activate CLI
+    alt returncode == 0
+      CLI-->>W: raw stdout
+      W->>N: strip code fences, extract {...}
+      N->>N: Multi-shape parse<br/>(5+ key variants: nested, top-level, scoreline string)
+      alt Parse success
+        N-->>W: {predicted_score:{a,b}, winner, confidence, ...}
+      else Parse failure
+        Note over W: Retry up to 3× w/ backoff 2s/4s
+      end
+    else Non-zero exit / timeout
+      Note over W: Retry w/ exponential backoff
+    end
+    deactivate CLI
+    W->>W: multi_llm[model] = result
+    W->>Sem: release()
+  end
+        </div>
+      </div>
+
+      <!-- 06 · Sequence — Consensus synthesis -->
+      <div class="slide">
+        <div class="slide-label">Correctness fix</div>
+        <h2>Consensus <span class="c-cyan">Synthesis</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant IN as multi_llm[3 models]
+  participant F as Filter (claude-* w/ valid score)
+  participant V as Vote Aggregator
+  participant TB as Tiebreaker (Opus > Sonnet > Haiku)
+  participant AVG as Score Averager
+  participant OUT as Synthesized Prediction
+  IN->>F: Each (model_name, prediction)
+  F->>V: winner ∈ {team_a, team_b, DRAW}
+  V->>V: Counter.most_common(1)
+  alt Vote tie
+    V->>TB: Break by model rank
+    TB-->>V: Prefer Opus > Sonnet > Haiku
+  end
+  V-->>AVG: consensus_winner
+  Note over AVG: Fix "averaging phantom" bug —<br/>naïve avg({1-0, 0-1}) = 0-0/1-1<br/>(neither model's actual pick)
+  AVG->>AVG: Filter scores → only those matching consensus_winner
+  AVG->>AVG: round(mean(filtered_scores_a)), round(mean(filtered_scores_b))
+  AVG->>OUT: consensus_score + rationale from a matching model
+        </div>
+      </div>
+
+      <!-- 07 · Design Decisions -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs</div>
+        <h2>Why this <span class="c-cyan">shape</span>?</h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">Multi-LLM consensus, score-truthful averaging</div>
+              <div class="feat-desc">Naïve averaging of <code>{1-0, 0-1}</code> yields <code>0-0</code>/<code>1-1</code> — a phantom nobody actually predicted. Filter scores to only those matching consensus winner before averaging.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">Sliding-window RPM limiter (deque of timestamps)</div>
+              <div class="feat-desc">Free-tier quota = 15 RPM; we enforce 13. <code>deque[float]</code> of request timestamps, prune entries older than 60s, sleep until oldest expires if full. Zero external state, thread-safe with a single lock.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-purple">
+              <div class="feat-title c-purple">Knockout-aware pipeline branch</div>
+              <div class="feat-desc">Group: xG base 2.5, standard Poisson. Knockouts: xG base 2.1, draw damping 0.7, favorite-edge boost. Same core pipeline — a single <code>is_knockout</code> flag flows through prompt + scoring.</div>
+            </div>
+            <div class="card card-green mt">
+              <div class="feat-title c-green">Iterative back-analysis before next round</div>
+              <div class="feat-desc">After group stage: back-analysis docs surfaced failure modes (draw underprediction, LLM verdict inversion, dead-rubber blindness). Ranked upgrades fed forward into R32 pipeline instead of full rewrite.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 · Outcomes -->
+      <div class="slide">
+        <div class="slide-label">Result · across 3 group-stage rounds</div>
+        <h2>Outcomes &amp; <span class="c-cyan">Ranking</span></h2>
+        <div class="divider"></div>
+        <div class="stat-row mt">
+          <div class="stat-cell"><div class="bignum c-cyan">#1</div><div class="bignote">country-wide · Indonesia</div></div>
+          <div class="stat-cell"><div class="bignum c-green">Top 1%</div><div class="bignote">global percentile</div></div>
+          <div class="stat-cell"><div class="bignum c-blue">3</div><div class="bignote">group-stage rounds</div></div>
+          <div class="stat-cell"><div class="bignum c-purple">72</div><div class="bignote">group fixtures</div></div>
+        </div>
+        <ul class="checks mt2">
+          <li>Ranked <strong class="c-cyan">#1 in Indonesia (country-wide)</strong> and <strong class="c-cyan">top 1% global percentile</strong> on SuperBru across all 3 group-stage rounds</li>
+          <li>4-stage idempotent pipeline — each stage re-runnable in isolation</li>
+          <li>Concurrent LLM calls: semaphore (cap 3) + sliding-window RPM limiter (13/60s) + retry 3× w/ backoff</li>
+          <li>Score normalizer handles 6+ output-shape variants (nested dicts, top-level keys, scoreline strings)</li>
+          <li>Consensus tiebreaker by model rank (Opus &gt; Sonnet &gt; Haiku) — no coin-flip on ties</li>
+          <li>Post-group-stage back-analysis surfaced 6 ranked upgrades before Round of 32 run</li>
+        </ul>
+      </div>
+
+    </div><!-- /wc2026 -->
+
+    <!-- ══════════════════════════════════════════════
+         DECK 4 · RTS.id × TOKOPEDIA BILLER INTEGRATION
+    ══════════════════════════════════════════════ -->
+    <div class="sysdeck-deck" data-deck="rts-tokopedia">
+
+      <!-- 01 · Cover -->
+      <div class="slide active">
+        <div class="slide-label">E-commerce · Tokopedia</div>
+        <h1>Encrypted<br/><span class="c-cyan">Biller Middleware</span></h1>
+        <div class="divider"></div>
+        <p style="max-width:30em;color:var(--text);">
+          Aggregate <strong class="c-white">Telkomsel airtime billing</strong> into Tokopedia while meeting
+          Tokopedia's strict security standards — signed + encrypted payload at every hop,
+          mTLS upstream to Telkomsel, settlement decoupled from request path.
+        </p>
+        <div class="mt2" style="display:flex;gap:.5em;flex-wrap:wrap;">
+          <span class="pill pill-blue">E2E Encrypted</span>
+          <span class="pill pill-cyan">Signed Payloads</span>
+          <span class="pill pill-purple">Two-Phase</span>
+        </div>
+        <p class="mt2" style="font-size:.55em;color:var(--muted);">RTS.id × Tokopedia · Telkomsel airtime</p>
+      </div>
+
+      <!-- 02 · Sequence Diagram -->
+      <div class="slide">
+        <div class="slide-label">Request flow</div>
+        <h2>Two-Phase <span class="c-cyan">Sequence</span></h2>
+        <div class="divider"></div>
+        <div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant Toped as Tokopedia
+  participant MW as RTS Middleware
+  participant Vault as Key Vault
+  participant Telkom as Telkomsel Aggregator
+  participant Settle as Settlement
+  Note over Toped,MW: Phase 1 · Inquiry
+  Toped->>Toped: Sign + encrypt request
+  Toped->>MW: POST /biller/inquiry (cipher + sig)
+  activate MW
+  MW->>Vault: Fetch private key
+  MW->>MW: Verify signature
+  MW->>MW: Decrypt payload
+  MW->>Telkom: Forward inquiry (mTLS)
+  Telkom-->>MW: Amount + status
+  MW->>MW: Encrypt + sign response
+  MW-->>Toped: Inquiry response
+  deactivate MW
+  Note over Toped,MW: Phase 2 · Payment
+  Toped->>MW: POST /biller/payment (signed)
+  activate MW
+  MW->>MW: Verify + decrypt
+  MW->>Telkom: Submit payment (mTLS)
+  Telkom-->>MW: Payment confirmation
+  MW->>Settle: Emit settlement event
+  MW-->>Toped: Signed encrypted ack
+  deactivate MW
+  Note over Settle: Out-of-band reconciliation
+        </div>
+      </div>
+
+      <!-- 03 · Design Decisions -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs</div>
+        <h2>Why this <span class="c-cyan">shape</span>?</h2>
+        <div class="divider"></div>
+        <div class="row mt">
+          <div class="col">
+            <div class="card card-cyan">
+              <div class="feat-title c-cyan">Two-phase inquiry → payment</div>
+              <div class="feat-desc">Matches Telkomsel's protocol. Prevents over-billing on client retries — inquiry is safely idempotent, payment is confirmed only once.</div>
+            </div>
+            <div class="card card-blue mt">
+              <div class="feat-title c-blue">mTLS upstream, signed-cipher downstream</div>
+              <div class="feat-desc">Different trust boundaries get different controls. Tokopedia's standard requires payload-level encryption + signing; Telkomsel uses mTLS at transport layer.</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card card-purple">
+              <div class="feat-title c-purple">Settlement as separate event stream</div>
+              <div class="feat-desc">Reconciliation runs out-of-band, never blocks the user-facing request path. Lossy network days don't degrade transaction latency.</div>
+            </div>
+            <div class="card card-green mt">
+              <div class="feat-title c-green">Keys live in Vault, never inlined</div>
+              <div class="feat-desc">Rotation handled centrally. Code reviews can't accidentally introduce a leaked key — there's nothing to leak in the repo.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 · Outcomes -->
+      <div class="slide">
+        <div class="slide-label">In production</div>
+        <h2>Outcomes &amp; <span class="c-cyan">Numbers</span></h2>
+        <div class="divider"></div>
+        <div class="stat-row mt">
+          <div class="stat-cell"><div class="bignum c-cyan">E2E</div><div class="bignote">encrypted at every hop</div></div>
+          <div class="stat-cell"><div class="bignum c-green">High-vol</div><div class="bignote">airtime billing</div></div>
+          <div class="stat-cell"><div class="bignum c-blue">2-phase</div><div class="bignote">retry-safe</div></div>
+          <div class="stat-cell"><div class="bignum c-purple">Out-of-band</div><div class="bignote">settlement</div></div>
+        </div>
+        <ul class="checks mt2">
+          <li>Met Tokopedia's complex security standards on first review</li>
+          <li>Minimized transaction failures in high-volume airtime billing</li>
+          <li>Settlement decoupled from request path — zero user-latency impact during reconciliation</li>
+        </ul>
+      </div>
+
+    </div><!-- /rts-tokopedia -->
+
+  </div><!-- /stage -->
+</div><!-- /#sysdeck-modal -->
+
 <!-- slide deck chrome (outside modal so fixed positioning works) -->
 <button class="sdeck-close-btn" onclick="closeSlides()">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
@@ -1535,6 +2799,22 @@
 <div class="sdeck-progress"><div class="sdeck-progress-fill" id="sdeck-prog"></div></div>
 <p class="sdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
 
+<!-- sysdeck chrome (separate from sdeck so state never mixes) -->
+<button class="sysdeck-close-btn" onclick="closeSysDeck()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  Back
+</button>
+<div class="sysdeck-deck-label"><span id="sysdeck-deck-name" class="c-cyan">—</span></div>
+<button class="sysdeck-nav" id="sysdeck-prev" onclick="sysdeck_go(-1)" aria-label="Previous slide">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="sysdeck-nav" id="sysdeck-next" onclick="sysdeck_go(1)" aria-label="Next slide">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:1.1rem;height:1.1rem;"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+<div class="sysdeck-counter"><span id="sysdeck-cur">1</span> / <span id="sysdeck-tot">4</span></div>
+<div class="sysdeck-progress"><div class="sysdeck-progress-fill" id="sysdeck-prog"></div></div>
+<p class="sysdeck-hint">← → or Space to navigate &nbsp;·&nbsp; Esc to close</p>
+
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -1550,7 +2830,7 @@
   }
 
   // Active nav on scroll
-  const sections = ['home','about','skills','experience','projects','talks'];
+  const sections = ['home','about','skills','experience','projects','system-designs','talks'];
   window.addEventListener('scroll', () => {
     const pos = window.scrollY + 120;
     for (const id of sections) {
@@ -1650,6 +2930,109 @@
     const dx = e.changedTouches[0].clientX - sdeck_tx;
     if (Math.abs(dx) > 40) sdeck_go(dx < 0 ? 1 : -1);
     sdeck_tx = null;
+  });
+
+  // ══════════════════════════════════════════════
+  // SYSTEM DESIGN DECK — multi-deck modal
+  // ══════════════════════════════════════════════
+  const sysdeck_titles = {
+    'qoala-bulk':    'Qoala · Bulk Policy V2',
+    'paper-ocr':     'Paper.id · OCR V2',
+    'baliklayar':    'Baliklayar.AI · AI Rendering',
+    'wc2026':        'WC2026 · Prediction Pipeline',
+    'rts-tokopedia': 'Tokopedia · Biller Middleware'
+  };
+  let sysdeck_active = null;
+  let sysdeck_pos = {                            // remember slide index per deck
+    'qoala-bulk': 0, 'paper-ocr': 0, 'baliklayar': 0, 'wc2026': 0, 'rts-tokopedia': 0
+  };
+  let sysdeck_mermaid_rendered = false;
+
+  function sysdeck_currentSlides() {
+    if (!sysdeck_active) return [];
+    return document.querySelectorAll(
+      `#sysdeck-modal .sysdeck-deck[data-deck="${sysdeck_active}"] .slide`
+    );
+  }
+
+  function sysdeck_render() {
+    // deck visibility
+    document.querySelectorAll('#sysdeck-modal .sysdeck-deck').forEach(d => {
+      d.classList.toggle('active', d.getAttribute('data-deck') === sysdeck_active);
+    });
+    // slide visibility within active deck
+    const slides = sysdeck_currentSlides();
+    const cur = sysdeck_pos[sysdeck_active] || 0;
+    slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+    // chrome
+    document.getElementById('sysdeck-cur').textContent = cur + 1;
+    document.getElementById('sysdeck-tot').textContent = slides.length;
+    const pct = slides.length ? ((cur + 1) / slides.length) * 100 : 0;
+    document.getElementById('sysdeck-prog').style.width = pct + '%';
+    document.getElementById('sysdeck-deck-name').textContent = sysdeck_titles[sysdeck_active] || '';
+  }
+
+  async function openSysDeck(deckId) {
+    sysdeck_active = deckId;
+    if (!(deckId in sysdeck_pos)) sysdeck_pos[deckId] = 0;
+
+    const modal = document.getElementById('sysdeck-modal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.querySelectorAll(
+      '.sysdeck-nav, .sysdeck-close-btn, .sysdeck-counter, .sysdeck-progress, .sysdeck-hint, .sysdeck-deck-label'
+    ).forEach(el => el.classList.add('visible'));
+
+    sysdeck_render();
+
+    // Lazy render Mermaid on first open — diagrams in hidden modals get 0px measurements
+    if (!sysdeck_mermaid_rendered && typeof mermaid !== 'undefined') {
+      const nodes = document.querySelectorAll('#sysdeck-modal .mermaid');
+      if (nodes.length) {
+        try {
+          await mermaid.run({ nodes: Array.from(nodes) });
+        } catch (err) {
+          console.error('Mermaid render error:', err);
+        }
+      }
+      sysdeck_mermaid_rendered = true;
+    }
+  }
+
+  function closeSysDeck() {
+    const modal = document.getElementById('sysdeck-modal');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    document.querySelectorAll(
+      '.sysdeck-nav, .sysdeck-close-btn, .sysdeck-counter, .sysdeck-progress, .sysdeck-hint, .sysdeck-deck-label'
+    ).forEach(el => el.classList.remove('visible'));
+    sysdeck_active = null;
+  }
+
+  function sysdeck_go(dir) {
+    if (!sysdeck_active) return;
+    const slides = sysdeck_currentSlides();
+    const cur = sysdeck_pos[sysdeck_active] || 0;
+    sysdeck_pos[sysdeck_active] = Math.max(0, Math.min(slides.length - 1, cur + dir));
+    sysdeck_render();
+  }
+
+  // keyboard — scoped to sysdeck-modal open state only
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('sysdeck-modal').classList.contains('open')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); sysdeck_go(1); }
+    if (e.key === 'ArrowLeft')                   { e.preventDefault(); sysdeck_go(-1); }
+    if (e.key === 'Escape')                      { closeSysDeck(); }
+  });
+
+  // touch swipe
+  let sysdeck_tx = null;
+  document.getElementById('sysdeck-modal').addEventListener('touchstart', e => { sysdeck_tx = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('sysdeck-modal').addEventListener('touchend',   e => {
+    if (sysdeck_tx === null) return;
+    const dx = e.changedTouches[0].clientX - sysdeck_tx;
+    if (Math.abs(dx) > 40) sysdeck_go(dx < 0 ? 1 : -1);
+    sysdeck_tx = null;
   });
 </script>
 </body>
