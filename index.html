@@ -4005,9 +4005,14 @@ sequenceDiagram
   });
 
   // ══════════════════════════════════════════════
-  // HERO TYPEWRITER + MORSE-0 BLINK
-  // Type "Hi, I'm Dwi Nanda." slowly, blink 5× (Morse for 0),
-  // then collapse and type the description faster.
+  // HERO TYPEWRITER + MORSE-0 BLINK — infinite loop
+  // Cycle:
+  //   1. Type "Hi, I'm Dwi Nanda." slowly
+  //   2. Blink whole h1 5× (Morse code for 0)
+  //   3. Collapse h1
+  //   4. Type description faster
+  //   5. Hold 10s
+  //   6. Fade description out, reset, repeat
   // ══════════════════════════════════════════════
   (function heroTypewriter() {
     const h1       = document.getElementById('hero-h1');
@@ -4021,58 +4026,99 @@ sequenceDiagram
     const gradStr  = gradEl.textContent;
     const descStr  = descText.textContent;
 
-    // Wait for layout so we can measure & reserve heights (avoids button jump)
-    requestAnimationFrame(() => {
-      const descHeight = desc.getBoundingClientRect().height;
-      desc.style.minHeight = descHeight + 'px';
+    // JS owns visibility — strip fade-up so it doesn't lock opacity at 1
+    h1.classList.remove('fade-up', 'delay-1');
+    desc.classList.remove('fade-up', 'delay-2');
+    h1.style.animation = 'none';
+    desc.style.animation = 'none';
 
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const type  = async (el, text, delay) => {
+      for (const ch of text) {
+        el.textContent += ch;
+        await sleep(delay);
+      }
+    };
+
+    async function resetForCycle() {
+      // Restore h1 to fully-visible / full-height state
+      h1.style.transition   = 'none';
+      h1.style.opacity      = '1';
+      h1.style.maxHeight    = '';
+      h1.style.marginTop    = '';
+      h1.style.marginBottom = '';
+      h1.style.overflow     = '';
+      h1.classList.remove('hero-h1-collapse');
+      // Clear text
       plainEl.textContent  = '';
       gradEl.textContent   = '';
       descText.textContent = '';
+      // Reset desc invisible (no reserved space — will grow when typed)
+      desc.style.transition = 'none';
+      desc.style.opacity    = '0';
+      // Force reflow so subsequent transitions actually run
+      // eslint-disable-next-line no-unused-expressions
+      h1.offsetHeight;
+    }
+
+    async function runCycle() {
+      await resetForCycle();
+
+      // ── 1. Type h1 ────────────────────────────────
       h1.classList.add('is-typing');
+      await sleep(450);
+      await type(plainEl, plainStr, 85);
+      await type(gradEl,  gradStr,  90);
+      await sleep(450);
 
-      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const type  = async (el, text, delay) => {
-        for (const ch of text) {
-          el.textContent += ch;
-          await sleep(delay);
-        }
-      };
+      // ── 2. Morse-0 blink (5 dashes × ~1s) ─────────
+      h1.classList.remove('is-typing');
+      h1.style.transition = 'opacity 0.05s linear';
+      for (let i = 0; i < 5; i++) {
+        h1.style.opacity = '0';
+        await sleep(500);
+        h1.style.opacity = '1';
+        await sleep(500);
+      }
 
-      (async () => {
-        await sleep(500);                       // let fade-up settle
-        await type(plainEl, plainStr, 85);      // "Hi, I'm " — slower, dramatic
-        await type(gradEl,  gradStr,  90);      // "Dwi Nanda." — same tempo
-        await sleep(450);                       // brief pause
+      // ── 3. Collapse h1 ────────────────────────────
+      h1.classList.add('hero-h1-collapse');
+      const h1H = h1.getBoundingClientRect().height;
+      h1.style.maxHeight = h1H + 'px';
+      // eslint-disable-next-line no-unused-expressions
+      h1.offsetHeight;
+      h1.style.transition   = 'opacity 0.45s ease, max-height 0.55s ease, margin 0.55s ease';
+      h1.style.opacity      = '0';
+      h1.style.maxHeight    = '0';
+      h1.style.marginTop    = '0';
+      h1.style.marginBottom = '0';
+      await sleep(600);
 
-        // Morse for 0 = five long dashes. Blink whole h1 5× — 500ms on / 500ms off (~1s each)
-        h1.classList.remove('is-typing');
-        h1.style.transition = 'opacity 0.05s linear';
-        for (let i = 0; i < 5; i++) {
-          h1.style.opacity = '0';
-          await sleep(500);
-          h1.style.opacity = '1';
-          await sleep(500);
-        }
+      // ── 4. Type description ───────────────────────
+      desc.style.transition = 'opacity 0.3s ease';
+      desc.style.opacity    = '1';
+      desc.classList.add('is-typing');
+      await type(descText, descStr, 22);
+      // keep cursor blinking during hold — classic typewriter feel
 
-        // Collapse h1 (opacity + height) so description takes its place
-        h1.classList.add('hero-h1-collapse');
-        const h1Height = h1.getBoundingClientRect().height;
-        h1.style.maxHeight = h1Height + 'px';
-        // eslint-disable-next-line no-unused-expressions
-        h1.offsetHeight;                        // force reflow so max-height animates
-        h1.style.opacity   = '0';
-        h1.style.maxHeight = '0';
-        h1.style.marginTop = '0';
-        h1.style.marginBottom = '0';
-        await sleep(600);
+      // ── 5. Hold 10s ───────────────────────────────
+      await sleep(10000);
 
-        // Type description — faster (~22ms/char)
-        desc.classList.add('is-typing');
-        await type(descText, descStr, 22);
-        desc.classList.remove('is-typing');
-      })();
-    });
+      // ── 6. Fade desc out ──────────────────────────
+      desc.classList.remove('is-typing');
+      desc.style.transition = 'opacity 0.6s ease';
+      desc.style.opacity    = '0';
+      await sleep(650);
+    }
+
+    (async () => {
+      // small pause on very first mount so page finishes settling
+      await sleep(200);
+      while (true) {
+        try { await runCycle(); }
+        catch (err) { console.error('hero cycle:', err); await sleep(2000); }
+      }
+    })();
   })();
 </script>
 </body>
