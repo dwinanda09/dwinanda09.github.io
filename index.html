@@ -355,9 +355,6 @@
       transition: opacity 0.45s ease, max-height 0.55s ease, margin 0.55s ease;
       overflow: hidden;
     }
-    @media (prefers-reduced-motion: reduce) {
-      .hero-cursor { display: none; }
-    }
 
   /* ══════════════════════════════════════════════
      SLIDE DECK OVERLAY — all styles scoped to
@@ -4019,7 +4016,6 @@ sequenceDiagram
     const desc     = document.getElementById('hero-desc');
     const descText = document.getElementById('hero-desc-text');
     if (!h1 || !plainEl || !gradEl || !desc || !descText) { return; }
-    if (matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
 
     const plainStr = plainEl.textContent;
     const gradStr  = gradEl.textContent;
