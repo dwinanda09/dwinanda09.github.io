@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   <script>
     mermaid.initialize({
       startOnLoad: false,
@@ -731,6 +732,87 @@
     .flow-viz .flow-packet {
       opacity: 0.35;
     }
+  }
+
+  /* ══════════════════════════════════════════════
+     ZOOM-MERMAID — infinite-canvas wrapper for large
+     Mermaid flowcharts. Uses svg-pan-zoom.
+  ══════════════════════════════════════════════ */
+  .zoom-mermaid {
+    position: relative;
+    width: 100%;
+    height: 68vmin;
+    max-height: 68vmin;
+    margin: 0 auto;
+    background: rgba(2, 6, 23, 0.5);
+    border: 1px solid rgba(30, 41, 59, 0.6);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: grab;
+    box-shadow: inset 0 0 60px rgba(6, 182, 212, 0.05);
+  }
+  .zoom-mermaid:active { cursor: grabbing; }
+  .zoom-mermaid .mermaid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .zoom-mermaid .mermaid svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: block;
+  }
+  .zoom-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+  }
+  .zoom-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    padding: 0;
+    backdrop-filter: blur(4px);
+  }
+  .zoom-btn:hover {
+    background: rgba(6, 182, 212, 0.18);
+    border-color: #06b6d4;
+    color: #f8fafc;
+  }
+  .zoom-btn:active { transform: scale(0.94); }
+  .zoom-hint {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 10.5px;
+    color: #64748b;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(2, 6, 23, 0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(30, 41, 59, 0.5);
   }
 
   /* ══════════════════════════════════════════════
@@ -3058,6 +3140,7 @@ sequenceDiagram
         <div class="slide-label">From raw JSON to consensus</div>
         <h2>Data <span class="c-cyan">Pipeline</span></h2>
         <div class="divider"></div>
+        <div class="zoom-mermaid" id="wc-pipeline-zoom">
         <div class="mermaid">
 flowchart TB
   subgraph Ing["1 · Ingestion (6 raw sources)"]
@@ -3101,6 +3184,13 @@ flowchart TB
   Ing --> LLM
   LLM --> Syn
   Syn --> Out
+        </div>
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="sysdeck_zoom('in')" title="Zoom in" aria-label="Zoom in">+</button>
+          <button class="zoom-btn" onclick="sysdeck_zoom('out')" title="Zoom out" aria-label="Zoom out">−</button>
+          <button class="zoom-btn" onclick="sysdeck_zoom('reset')" title="Fit &amp; center" aria-label="Fit and center" style="font-size:13px;">⤢</button>
+        </div>
+        <div class="zoom-hint">scroll · drag · buttons</div>
         </div>
       </div>
 
@@ -3728,12 +3818,54 @@ sequenceDiagram
     'qoala-bulk': 0, 'paper-ocr': 0, 'baliklayar': 0, 'wc2026': 0, 'rts-tokopedia': 0
   };
   let sysdeck_mermaid_rendered = false;
+  let sysdeck_panzoom_instance = null;
 
   function sysdeck_currentSlides() {
     if (!sysdeck_active) return [];
     return document.querySelectorAll(
       `#sysdeck-modal .sysdeck-deck[data-deck="${sysdeck_active}"] .slide`
     );
+  }
+
+  function sysdeck_maybe_init_zoom() {
+    if (sysdeck_panzoom_instance) { return; }
+    if (typeof svgPanZoom === 'undefined') { return; }
+    const activeSlide = document.querySelector(
+      `#sysdeck-modal .sysdeck-deck.active .slide.active`
+    );
+    if (!activeSlide) { return; }
+    const wrap = activeSlide.querySelector('.zoom-mermaid');
+    if (!wrap) { return; }
+    const svg = wrap.querySelector('.mermaid svg');
+    if (!svg) { return; }
+    // Clear Mermaid's inline max-width / style constraints that fight the container
+    svg.removeAttribute('style');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    sysdeck_panzoom_instance = svgPanZoom(svg, {
+      zoomEnabled: true,
+      panEnabled: true,
+      controlIconsEnabled: false,
+      fit: true,
+      center: true,
+      minZoom: 0.4,
+      maxZoom: 10,
+      zoomScaleSensitivity: 0.35,
+      dblClickZoomEnabled: true,
+      mouseWheelZoomEnabled: true,
+    });
+  }
+
+  function sysdeck_zoom(action) {
+    if (!sysdeck_panzoom_instance) { sysdeck_maybe_init_zoom(); }
+    if (!sysdeck_panzoom_instance) { return; }
+    if (action === 'in')    { sysdeck_panzoom_instance.zoomIn(); }
+    else if (action === 'out')   { sysdeck_panzoom_instance.zoomOut(); }
+    else if (action === 'reset') {
+      sysdeck_panzoom_instance.resetZoom();
+      sysdeck_panzoom_instance.center();
+      sysdeck_panzoom_instance.fit();
+    }
   }
 
   function sysdeck_render() {
@@ -3751,6 +3883,8 @@ sequenceDiagram
     const pct = slides.length ? ((cur + 1) / slides.length) * 100 : 0;
     document.getElementById('sysdeck-prog').style.width = pct + '%';
     document.getElementById('sysdeck-deck-name').textContent = sysdeck_titles[sysdeck_active] || '';
+    // Lazy init pan/zoom on zoomable slide first visit (defer until layout settles)
+    requestAnimationFrame(() => sysdeck_maybe_init_zoom());
   }
 
   async function openSysDeck(deckId) {
@@ -3778,6 +3912,8 @@ sequenceDiagram
       }
       sysdeck_mermaid_rendered = true;
     }
+    // Try to init pan/zoom now that mermaid SVGs exist (in case current slide is the zoomable one)
+    requestAnimationFrame(() => sysdeck_maybe_init_zoom());
   }
 
   function closeSysDeck() {
