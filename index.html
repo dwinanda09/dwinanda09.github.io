@@ -614,35 +614,26 @@
 
   /* ══════════════════════════════════════════════
      FLOW-VIZ — animated SVG data-flow illustrations
-     paired with Mermaid diagrams inside #sysdeck-modal.
-     Pure declarative SMIL (animateMotion / animate);
-     no JS animation library.
+     Each flow lives on its own slide (right after the Mermaid slide)
+     so nodes stay large and legible. Pure declarative SMIL.
   ══════════════════════════════════════════════ */
-  .flow-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    align-items: center;
-    width: 100%;
-  }
-  @media (max-width: 900px) {
-    .flow-split { grid-template-columns: 1fr; gap: 1rem; }
-  }
   .flow-viz {
     width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    padding: 1rem;
     background: rgba(2, 6, 23, 0.4);
     border: 1px solid rgba(30, 41, 59, 0.6);
-    border-radius: 10px;
-    box-shadow: inset 0 0 40px rgba(6, 182, 212, 0.04);
+    border-radius: 12px;
+    box-shadow: inset 0 0 60px rgba(6, 182, 212, 0.05);
   }
   .flow-viz svg {
     width: 100%;
     height: auto;
-    max-height: 52vmin;
+    max-height: 68vmin;
     overflow: visible;
     display: block;
   }
@@ -729,18 +720,6 @@
     font-weight: 600;
     text-anchor: middle;
     dominant-baseline: middle;
-  }
-  /* Fine-tune Mermaid container inside split view — keep it centered */
-  .flow-split .mermaid {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .flow-split .mermaid svg {
-    max-width: 100%;
-    max-height: 52vmin;
-    height: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -2128,7 +2107,6 @@
         <div class="slide-label">Request flow</div>
         <h2>Pipeline <span class="c-cyan">Sequence</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2171,6 +2149,13 @@ sequenceDiagram
   end
   Note over Z,DB: 20K rows end-to-end in ~1 hour (golden-hour BAU)
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Request flow · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated bulk ingestion: Excel upload fans out through SQS into five parallel consumer lanes writing to PostgreSQL">
             <text x="8" y="14" class="flow-title">Bulk Ingestion · Fan-out</text>
@@ -2215,7 +2200,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.6s" repeatCount="indefinite"><mpath xlink:href="#qb-db4"/></animateMotion></circle>
             <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.9s" repeatCount="indefinite"><mpath xlink:href="#qb-db5"/></animateMotion></circle>
           </svg>
-        </div>
         </div>
       </div>
 
@@ -2297,7 +2281,6 @@ sequenceDiagram
         <div class="slide-label">Entry path A · Email</div>
         <h2>Email <span class="c-cyan">Flow</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2332,8 +2315,15 @@ sequenceDiagram
   PY-->>S: Notify sender (paid)
   PY->>ERP: Sync to client ERP (SAP HANA / Xero)
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
-          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated OCR email path: incoming email flows through Pubsub, queue, OCR worker with spinning gear, then forks approval to Bulk Payment and ERP sync">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated OCR email path: incoming email flows through Pubsub, queue, OCR worker with spinning gear; downstream Invoice → Approval → Bulk Payment → ERP Sync as a sequential chain">
             <text x="8" y="14" class="flow-title">OCR · Email Path</text>
             <rect class="flow-node" x="10" y="34" width="70" height="30" rx="6"/><text class="flow-node-label" x="45" y="49">Email</text>
             <rect class="flow-node flow-node-hero" x="102" y="30" width="88" height="38" rx="6"/><text class="flow-node-label" x="146" y="43">Pubsub</text><text class="flow-node-sublabel" x="146" y="59">filter · resolve</text>
@@ -2351,31 +2341,28 @@ sequenceDiagram
               </g>
             </g>
             <text class="flow-node-sublabel" x="442" y="138">Gemini OCR</text>
-            <rect class="flow-node" x="304" y="155" width="80" height="30" rx="6"/><text class="flow-node-label" x="344" y="170">Invoice</text>
-            <rect class="flow-node flow-node-warn" x="180" y="155" width="94" height="30" rx="6"/><text class="flow-node-label" x="227" y="170">Approval</text>
-            <rect class="flow-node" x="12" y="225" width="90" height="30" rx="6"/><text class="flow-node-label" x="57" y="240">Bulk Payment</text>
-            <rect class="flow-node" x="130" y="225" width="90" height="30" rx="6"/><text class="flow-node-label" x="175" y="240">ERP Sync</text>
-            <text class="flow-node-sublabel" x="250" y="285">Multi-layer approval · SAP HANA / Xero downstream</text>
+            <rect class="flow-node" x="10"  y="225" width="100" height="32" rx="6"/><text class="flow-node-label" x="60"  y="241">Invoice</text>
+            <rect class="flow-node flow-node-warn" x="126" y="225" width="100" height="32" rx="6"/><text class="flow-node-label" x="176" y="241">Approval</text>
+            <rect class="flow-node" x="242" y="225" width="120" height="32" rx="6"/><text class="flow-node-label" x="302" y="241">Bulk Payment</text>
+            <rect class="flow-node flow-node-hero" x="378" y="225" width="110" height="32" rx="6"/><text class="flow-node-label" x="433" y="241">ERP Sync</text>
+            <text class="flow-node-sublabel" x="250" y="285">Multi-layer approval → Bulk Payment → SAP HANA / Xero (sequential)</text>
             <path class="flow-path" d="M 80 49 H 102 M 190 49 H 210 M 284 49 H 304 M 374 49 H 394"/>
             <path class="flow-path" d="M 442 64 V 91"/>
-            <path class="flow-path" d="M 442 155 V 145 L 384 145 L 384 155"/>
-            <path class="flow-path" d="M 304 170 L 274 170"/>
-            <path class="flow-path" d="M 227 185 Q 140 210 57 225"/>
-            <path class="flow-path" d="M 227 185 Q 200 210 175 225"/>
+            <path class="flow-path" d="M 442 120 Q 442 175 60 225"/>
+            <path class="flow-path" d="M 110 241 H 126 M 226 241 H 242 M 362 241 H 378"/>
             <path id="oe-chain" fill="none" stroke="none" d="M 80 49 L 102 49 L 190 49 L 210 49 L 284 49 L 304 49 L 374 49 L 394 49"/>
             <path id="oe-worker" fill="none" stroke="none" d="M 442 64 L 442 91"/>
-            <path id="oe-inv" fill="none" stroke="none" d="M 442 145 L 384 145 L 384 155"/>
-            <path id="oe-app" fill="none" stroke="none" d="M 304 170 L 274 170"/>
-            <path id="oe-pay" fill="none" stroke="none" d="M 227 185 Q 140 210 57 225"/>
-            <path id="oe-erp" fill="none" stroke="none" d="M 227 185 Q 200 210 175 225"/>
+            <path id="oe-to-inv" fill="none" stroke="none" d="M 442 120 Q 442 175 60 225"/>
+            <path id="oe-inv-app" fill="none" stroke="none" d="M 110 241 L 126 241"/>
+            <path id="oe-app-pay" fill="none" stroke="none" d="M 226 241 L 242 241"/>
+            <path id="oe-pay-erp" fill="none" stroke="none" d="M 362 241 L 378 241"/>
             <circle class="flow-packet json" r="4"><animateMotion dur="4s" repeatCount="indefinite"><mpath xlink:href="#oe-chain"/></animateMotion></circle>
-            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="2.5s" repeatCount="indefinite"><mpath xlink:href="#oe-worker"/></animateMotion></circle>
-            <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="0.5s" repeatCount="indefinite"><mpath xlink:href="#oe-inv"/></animateMotion></circle>
-            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="0.8s" repeatCount="indefinite"><mpath xlink:href="#oe-app"/></animateMotion></circle>
-            <circle class="flow-packet res" r="3.5"><animateMotion dur="1.8s" begin="1.2s" repeatCount="indefinite"><mpath xlink:href="#oe-pay"/></animateMotion></circle>
-            <circle class="flow-packet res" r="3.5"><animateMotion dur="1.8s" begin="1.8s" repeatCount="indefinite"><mpath xlink:href="#oe-erp"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="2.5s;5.5s" repeatCount="indefinite"><mpath xlink:href="#oe-worker"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="2.2s" begin="3s;6s" repeatCount="indefinite"><mpath xlink:href="#oe-to-inv"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="0s;3s;6s" repeatCount="indefinite"><mpath xlink:href="#oe-inv-app"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="0.9s;3.9s;6.9s" repeatCount="indefinite"><mpath xlink:href="#oe-app-pay"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="1.8s;4.8s;7.8s" repeatCount="indefinite"><mpath xlink:href="#oe-pay-erp"/></animateMotion></circle>
           </svg>
-        </div>
         </div>
       </div>
 
@@ -2384,7 +2371,6 @@ sequenceDiagram
         <div class="slide-label">Entry path B · Dashboard form</div>
         <h2>Form <span class="c-cyan">Bulk Upload</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2418,6 +2404,13 @@ sequenceDiagram
     Note over D: Failed files run as separate job — never auto-poison original
   end
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Entry path B · Dashboard form · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated OCR dashboard path: user uploads files, background processor calls OCR engine (spinning), creates invoices, triggers approval, and streams progress back to dashboard">
             <text x="8" y="14" class="flow-title">OCR · Dashboard Form Path</text>
@@ -2459,7 +2452,6 @@ sequenceDiagram
             <circle class="flow-packet json" r="3.5"><animateMotion dur="2.2s" begin="1.2s" repeatCount="indefinite"><mpath xlink:href="#ob-prog"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 04 · Sequence Diagram — Slack Observability -->
@@ -2467,7 +2459,6 @@ sequenceDiagram
         <div class="slide-label">Realtime observability</div>
         <h2>Slack <span class="c-cyan">Thread Story</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2489,6 +2480,13 @@ sequenceDiagram
   end
   Note over SL: Everyone watches the full pipeline live in one thread
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Realtime observability · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated observability: OCR worker emits per-stage replies to a Slack thread; failures alert the ops team">
             <text x="8" y="14" class="flow-title">Slack · Live Thread</text>
@@ -2514,7 +2512,6 @@ sequenceDiagram
             <circle class="flow-packet warn" r="4"><animateMotion dur="0.8s" begin="18.5s;23.5s" repeatCount="indefinite"><mpath xlink:href="#sl-alert"/></animateMotion></circle>
             <text class="flow-node-sublabel" x="250" y="282">Watchers see the pipeline live · alert only when it breaks</text>
           </svg>
-        </div>
         </div>
       </div>
 
@@ -2596,7 +2593,6 @@ sequenceDiagram
         <div class="slide-label">Foundational pattern</div>
         <h2>Submit &amp; <span class="c-cyan">Async Poll</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2638,6 +2634,13 @@ sequenceDiagram
     end
   end
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated Baliklayar canonical flow: user submit chain synchronously enters DB, background cron scheduler polls vendor every minute, results write to Postgres and Object Store">
             <text x="8" y="14" class="flow-title">Submit + Poll · Two Loops</text>
@@ -2670,7 +2673,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="1.6s;4.1s;6.6s" repeatCount="indefinite"><mpath xlink:href="#bs-obj"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 03 · Sequence Diagram — Motion Control vendor router -->
@@ -2678,7 +2680,6 @@ sequenceDiagram
         <div class="slide-label">Smart routing</div>
         <h2>Motion <span class="c-cyan">Vendor Router</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2722,6 +2723,13 @@ sequenceDiagram
     end
   end
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Smart routing · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated Motion vendor router: requests routed by ref-video duration between Vendor A (short) and Vendor B (long); results converge to Object Store and Postgres">
             <text x="8" y="14" class="flow-title">Motion · Vendor Router</text>
@@ -2756,7 +2764,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="1.6s;4.1s;6.6s" repeatCount="indefinite"><mpath xlink:href="#br-obj"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 04 · Sequence Diagram — Freeform multi-model dispatcher -->
@@ -2764,7 +2771,6 @@ sequenceDiagram
         <div class="slide-label">7 engines, 1 endpoint</div>
         <h2>Freeform <span class="c-cyan">Dispatcher</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2796,6 +2802,13 @@ sequenceDiagram
   BE-->>FE: 201 {task_id, credits_used}
   Note over FE: FE polls every 5s — same drain pattern as canonical
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">7 engines, 1 endpoint · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated freeform multi-model dispatcher: single endpoint routes to 7 possible engines through Kling API or Vendor Proxy, task IDs return in parallel">
             <text x="8" y="14" class="flow-title">Freeform · Model Dispatcher</text>
@@ -2826,7 +2839,6 @@ sequenceDiagram
             <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="3s;8s"    repeatCount="indefinite"><mpath xlink:href="#bf-k4"/></animateMotion></circle>
             <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="4s;9s"    repeatCount="indefinite"><mpath xlink:href="#bf-k5"/></animateMotion></circle>
           </svg>
-        </div>
         </div>
       </div>
 
@@ -2948,7 +2960,6 @@ sequenceDiagram
         <div class="slide-label">End-to-end flow</div>
         <h2>4-Stage <span class="c-cyan">Pipeline</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2983,6 +2994,13 @@ sequenceDiagram
   S3->>FS: dashboard.html (updated)
   deactivate S3
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated WC2026 four-stage pipeline: baseline, LLM augmentation, populator, renderer — each stage passes an artifact to the next through the filesystem">
             <text x="8" y="14" class="flow-title">Pipeline · 4 Stages</text>
@@ -3033,7 +3051,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="4.2s;9.2s" repeatCount="indefinite"><mpath xlink:href="#pl-w3"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 04 · Data Pipeline Flow -->
@@ -3041,7 +3058,6 @@ sequenceDiagram
         <div class="slide-label">From raw JSON to consensus</div>
         <h2>Data <span class="c-cyan">Pipeline</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 flowchart TB
   subgraph Ing["1 · Ingestion (6 raw sources)"]
@@ -3086,6 +3102,13 @@ flowchart TB
   LLM --> Syn
   Syn --> Out
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">From raw JSON to consensus · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated data pipeline: six raw sources fan in through enrichment and baseline into three parallel LLM models, converging to consensus and final prediction">
             <text x="8" y="14" class="flow-title">Ingestion → Consensus</text>
@@ -3138,7 +3161,6 @@ flowchart TB
             <circle class="flow-packet res" r="4"><animateMotion dur="0.5s" begin="3.7s" repeatCount="indefinite"><mpath xlink:href="#fc-out"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 05 · Sequence — LLM concurrency + RPM limiter -->
@@ -3146,7 +3168,6 @@ flowchart TB
         <div class="slide-label">Concurrency layer</div>
         <h2>Rate-Limited <span class="c-cyan">LLM Calls</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -3178,6 +3199,13 @@ sequenceDiagram
     W->>Sem: release()
   end
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Concurrency layer · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated LLM rate limiter: five queued fixtures pass through a semaphore gate with three slots, then a sliding-window rate limiter capped at 13 requests per 60 seconds, then LLM CLI and normalizer">
             <text x="8" y="14" class="flow-title">Two-Gate Throttle · sem + rpm</text>
@@ -3235,7 +3263,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="4"><animateMotion dur="0.6s" begin="4s;7s"     repeatCount="indefinite"><mpath xlink:href="#rl-final"/></animateMotion></circle>
           </svg>
         </div>
-        </div>
       </div>
 
       <!-- 06 · Sequence — Consensus synthesis -->
@@ -3243,7 +3270,6 @@ sequenceDiagram
         <div class="slide-label">Correctness fix</div>
         <h2>Consensus <span class="c-cyan">Synthesis</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -3266,6 +3292,13 @@ sequenceDiagram
   AVG->>AVG: round(mean(filtered_scores_a)), round(mean(filtered_scores_b))
   AVG->>OUT: consensus_score + rationale from a matching model
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Correctness fix · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated consensus synthesis: three LLM predictions fan into filter, vote aggregator with tiebreaker, score averager filtered by consensus winner, then synthesized output">
             <text x="8" y="14" class="flow-title">Consensus · Vote + Filtered Avg</text>
@@ -3301,7 +3334,6 @@ sequenceDiagram
             <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="2.2s" repeatCount="indefinite"><mpath xlink:href="#cs-a2"/></animateMotion></circle>
             <circle class="flow-packet res" r="4"><animateMotion dur="1s"   begin="3s"   repeatCount="indefinite"><mpath xlink:href="#cs-out"/></animateMotion></circle>
           </svg>
-        </div>
         </div>
       </div>
 
@@ -3385,7 +3417,6 @@ sequenceDiagram
         <div class="slide-label">Request flow</div>
         <h2>Two-Phase <span class="c-cyan">Sequence</span></h2>
         <div class="divider"></div>
-        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -3417,6 +3448,13 @@ sequenceDiagram
   deactivate MW
   Note over Settle: Out-of-band reconciliation
         </div>
+      </div>
+
+      <!-- Animated flow -->
+      <div class="slide">
+        <div class="slide-label">Design tradeoffs · animated</div>
+        <h2>Live <span class="c-cyan">Flow</span></h2>
+        <div class="divider"></div>
         <div class="flow-viz">
           <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated RTS encrypted two-phase flow: Tokopedia signs and encrypts request, middleware fetches key from vault, verifies and decrypts, forwards over mTLS to Telkomsel, encrypts response, emits settlement event">
             <text x="8" y="14" class="flow-title">Encrypted Two-Phase · mTLS</text>
@@ -3459,7 +3497,6 @@ sequenceDiagram
             <circle class="flow-packet enc" r="4"><animateMotion dur="0.8s" begin="3.5s;7.5s"  repeatCount="indefinite"><mpath xlink:href="#rt-ack"/></animateMotion></circle>
             <circle class="flow-packet res" r="4"><animateMotion dur="1.4s" begin="3.5s;7.5s"  repeatCount="indefinite"><mpath xlink:href="#rt-set"/></animateMotion></circle>
           </svg>
-        </div>
         </div>
       </div>
 
