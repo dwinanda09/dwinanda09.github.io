@@ -742,8 +742,10 @@
     position: relative;
     width: 100%;
     height: 68vmin;
-    max-height: 68vmin;
+    min-height: 400px;
+    max-height: 78vh;
     margin: 0 auto;
+    padding: 0;
     background: rgba(2, 6, 23, 0.5);
     border: 1px solid rgba(30, 41, 59, 0.6);
     border-radius: 12px;
@@ -753,11 +755,14 @@
   }
   .zoom-mermaid:active { cursor: grabbing; }
   .zoom-mermaid .mermaid {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin: 0;
+    padding: 0;
+    display: block;
+    overflow: hidden;
   }
   .zoom-mermaid .mermaid svg {
     width: 100% !important;
@@ -3838,22 +3843,48 @@ sequenceDiagram
     if (!wrap) { return; }
     const svg = wrap.querySelector('.mermaid svg');
     if (!svg) { return; }
-    // Clear Mermaid's inline max-width / style constraints that fight the container
+    // Container needs a real size before we init — bail if not laid out yet
+    const rect = wrap.getBoundingClientRect();
+    if (rect.width < 20 || rect.height < 20) { return; }
+    // Wipe Mermaid's inline style (sets max-width) and its intrinsic width/height,
+    // then force the SVG to fill the whole container in absolute pixels.
     svg.removeAttribute('style');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
+    svg.setAttribute('width', Math.round(rect.width));
+    svg.setAttribute('height', Math.round(rect.height));
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.style.maxWidth = 'none';
+    svg.style.maxHeight = 'none';
+    svg.style.display = 'block';
+    // Ensure preserveAspectRatio doesn't fight us — content should scale to fit viewport
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     sysdeck_panzoom_instance = svgPanZoom(svg, {
       zoomEnabled: true,
       panEnabled: true,
       controlIconsEnabled: false,
       fit: true,
       center: true,
-      minZoom: 0.4,
-      maxZoom: 10,
+      contain: false,
+      minZoom: 0.3,
+      maxZoom: 12,
       zoomScaleSensitivity: 0.35,
       dblClickZoomEnabled: true,
       mouseWheelZoomEnabled: true,
     });
+    // Follow container resize so the workable area stays edge-to-edge
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        if (!sysdeck_panzoom_instance) { return; }
+        const r = wrap.getBoundingClientRect();
+        if (r.width < 20 || r.height < 20) { return; }
+        svg.setAttribute('width', Math.round(r.width));
+        svg.setAttribute('height', Math.round(r.height));
+        sysdeck_panzoom_instance.resize();
+        sysdeck_panzoom_instance.fit();
+        sysdeck_panzoom_instance.center();
+      });
+      ro.observe(wrap);
+    }
   }
 
   function sysdeck_zoom(action) {
