@@ -613,6 +613,148 @@
   }
 
   /* ══════════════════════════════════════════════
+     FLOW-VIZ — animated SVG data-flow illustrations
+     paired with Mermaid diagrams inside #sysdeck-modal.
+     Pure declarative SMIL (animateMotion / animate);
+     no JS animation library.
+  ══════════════════════════════════════════════ */
+  .flow-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: center;
+    width: 100%;
+  }
+  @media (max-width: 900px) {
+    .flow-split { grid-template-columns: 1fr; gap: 1rem; }
+  }
+  .flow-viz {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: rgba(2, 6, 23, 0.4);
+    border: 1px solid rgba(30, 41, 59, 0.6);
+    border-radius: 10px;
+    box-shadow: inset 0 0 40px rgba(6, 182, 212, 0.04);
+  }
+  .flow-viz svg {
+    width: 100%;
+    height: auto;
+    max-height: 52vmin;
+    overflow: visible;
+    display: block;
+  }
+  .flow-viz .flow-caption {
+    fill: #64748b;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .flow-viz .flow-node {
+    fill: #0f172a;
+    stroke: #334155;
+    stroke-width: 1.2;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  }
+  .flow-viz .flow-node-hero {
+    fill: rgba(6, 182, 212, 0.08);
+    stroke: #06b6d4;
+    stroke-width: 1.5;
+  }
+  .flow-viz .flow-node-warn {
+    fill: rgba(167, 139, 250, 0.08);
+    stroke: #a78bfa;
+    stroke-width: 1.5;
+  }
+  .flow-viz .flow-node-label {
+    fill: #cbd5e1;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+  .flow-viz .flow-node-sublabel {
+    fill: #64748b;
+    font-family: 'Inter', sans-serif;
+    font-size: 8.5px;
+    font-weight: 500;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .flow-viz .flow-path {
+    fill: none;
+    stroke: #1e293b;
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    opacity: 0.55;
+  }
+  .flow-viz .flow-path-live {
+    fill: none;
+    stroke: rgba(6, 182, 212, 0.35);
+    stroke-width: 1.4;
+    opacity: 0.7;
+  }
+  .flow-viz .flow-packet {
+    fill: #06b6d4;
+    filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.9));
+  }
+  .flow-viz .flow-packet.json { fill: #60a5fa; filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.9)); }
+  .flow-viz .flow-packet.enc  { fill: #a78bfa; filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.9)); }
+  .flow-viz .flow-packet.res  { fill: #34d399; filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.9)); }
+  .flow-viz .flow-packet.warn { fill: #fbbf24; filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.9)); }
+  .flow-viz .flow-title {
+    fill: #94a3b8;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-anchor: start;
+  }
+  .flow-viz .flow-badge {
+    fill: rgba(6, 182, 212, 0.1);
+    stroke: rgba(6, 182, 212, 0.4);
+    stroke-width: 1;
+  }
+  .flow-viz .flow-badge-text {
+    fill: #06b6d4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  /* Fine-tune Mermaid container inside split view — keep it centered */
+  .flow-split .mermaid {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .flow-split .mermaid svg {
+    max-width: 100%;
+    max-height: 52vmin;
+    height: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-viz animateMotion,
+    .flow-viz animate,
+    .flow-viz animateTransform {
+      display: none;
+    }
+    .flow-viz .flow-packet {
+      opacity: 0.35;
+    }
+  }
+
+  /* ══════════════════════════════════════════════
      SYSTEM DESIGN DECK OVERLAY — separate namespace
      from #sdeck-modal so gRPC deck stays untouched
   ══════════════════════════════════════════════ */
@@ -1986,6 +2128,7 @@
         <div class="slide-label">Request flow</div>
         <h2>Pipeline <span class="c-cyan">Sequence</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2027,6 +2170,52 @@ sequenceDiagram
     deactivate C
   end
   Note over Z,DB: 20K rows end-to-end in ~1 hour (golden-hour BAU)
+        </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated bulk ingestion: Excel upload fans out through SQS into five parallel consumer lanes writing to PostgreSQL">
+            <text x="8" y="14" class="flow-title">Bulk Ingestion · Fan-out</text>
+            <rect class="flow-node" x="12" y="34" width="70" height="30" rx="6"/><text class="flow-node-label" x="47" y="49">Ops</text>
+            <rect class="flow-node" x="105" y="34" width="82" height="30" rx="6"/><text class="flow-node-label" x="146" y="49">Upload API</text>
+            <rect class="flow-node" x="210" y="34" width="70" height="30" rx="6"/><text class="flow-node-label" x="245" y="49">S3</text>
+            <rect class="flow-node flow-node-hero" x="303" y="34" width="90" height="30" rx="6"/><text class="flow-node-label" x="348" y="49">Lambda</text>
+            <rect class="flow-node flow-node-hero" x="12" y="128" width="476" height="26" rx="13"/><text class="flow-node-label" x="250" y="141">AWS SQS · fan-out bus</text>
+            <rect class="flow-node" x="18" y="212" width="55" height="28" rx="6"/><text class="flow-node-label" x="45" y="226">w1</text>
+            <rect class="flow-node" x="93" y="212" width="55" height="28" rx="6"/><text class="flow-node-label" x="120" y="226">w2</text>
+            <rect class="flow-node" x="168" y="212" width="55" height="28" rx="6"/><text class="flow-node-label" x="195" y="226">w3</text>
+            <rect class="flow-node" x="243" y="212" width="55" height="28" rx="6"/><text class="flow-node-label" x="270" y="226">w4</text>
+            <rect class="flow-node" x="318" y="212" width="55" height="28" rx="6"/><text class="flow-node-label" x="345" y="226">w5</text>
+            <rect class="flow-node flow-node-hero" x="410" y="212" width="78" height="28" rx="6"/><text class="flow-node-label" x="449" y="226">Postgres</text>
+            <text class="flow-node-sublabel" x="250" y="285">20K rows &lt; 1 hr · ~40K/hr sustained · idempotent by row-key</text>
+            <path class="flow-path" d="M 82 49 H 105 M 187 49 H 210 M 280 49 H 303"/>
+            <path class="flow-path" d="M 348 64 V 128"/>
+            <path class="flow-path" d="M 60 154 L 45 212 M 140 154 L 120 212 M 220 154 L 195 212 M 300 154 L 270 212 M 380 154 L 345 212"/>
+            <path class="flow-path" d="M 73 226 Q 240 275 410 226 M 148 226 Q 260 268 410 226 M 223 226 Q 300 260 410 226 M 298 226 Q 340 250 410 226 M 373 226 L 410 226"/>
+            <path id="qb-chain" fill="none" stroke="none" d="M 82 49 L 105 49 L 187 49 L 210 49 L 280 49 L 303 49"/>
+            <path id="qb-drop" fill="none" stroke="none" d="M 348 64 L 348 128"/>
+            <path id="qb-fan1" fill="none" stroke="none" d="M 60 154 L 45 212"/>
+            <path id="qb-fan2" fill="none" stroke="none" d="M 140 154 L 120 212"/>
+            <path id="qb-fan3" fill="none" stroke="none" d="M 220 154 L 195 212"/>
+            <path id="qb-fan4" fill="none" stroke="none" d="M 300 154 L 270 212"/>
+            <path id="qb-fan5" fill="none" stroke="none" d="M 380 154 L 345 212"/>
+            <path id="qb-db1" fill="none" stroke="none" d="M 73 226 Q 240 275 410 226"/>
+            <path id="qb-db2" fill="none" stroke="none" d="M 148 226 Q 260 268 410 226"/>
+            <path id="qb-db3" fill="none" stroke="none" d="M 223 226 Q 300 260 410 226"/>
+            <path id="qb-db4" fill="none" stroke="none" d="M 298 226 Q 340 250 410 226"/>
+            <path id="qb-db5" fill="none" stroke="none" d="M 373 226 L 410 226"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="3s" repeatCount="indefinite"><mpath xlink:href="#qb-chain"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="1.5s" repeatCount="indefinite"><mpath xlink:href="#qb-drop"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="1.6s" begin="0s"   repeatCount="indefinite"><mpath xlink:href="#qb-fan1"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="1.6s" begin="0.3s" repeatCount="indefinite"><mpath xlink:href="#qb-fan2"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="1.6s" begin="0.6s" repeatCount="indefinite"><mpath xlink:href="#qb-fan3"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="1.6s" begin="0.9s" repeatCount="indefinite"><mpath xlink:href="#qb-fan4"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="1.6s" begin="1.2s" repeatCount="indefinite"><mpath xlink:href="#qb-fan5"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="0.7s" repeatCount="indefinite"><mpath xlink:href="#qb-db1"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.0s" repeatCount="indefinite"><mpath xlink:href="#qb-db2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.3s" repeatCount="indefinite"><mpath xlink:href="#qb-db3"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.6s" repeatCount="indefinite"><mpath xlink:href="#qb-db4"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="2s" begin="1.9s" repeatCount="indefinite"><mpath xlink:href="#qb-db5"/></animateMotion></circle>
+          </svg>
+        </div>
         </div>
       </div>
 
@@ -2108,6 +2297,7 @@ sequenceDiagram
         <div class="slide-label">Entry path A · Email</div>
         <h2>Email <span class="c-cyan">Flow</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2142,6 +2332,51 @@ sequenceDiagram
   PY-->>S: Notify sender (paid)
   PY->>ERP: Sync to client ERP (SAP HANA / Xero)
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated OCR email path: incoming email flows through Pubsub, queue, OCR worker with spinning gear, then forks approval to Bulk Payment and ERP sync">
+            <text x="8" y="14" class="flow-title">OCR · Email Path</text>
+            <rect class="flow-node" x="10" y="34" width="70" height="30" rx="6"/><text class="flow-node-label" x="45" y="49">Email</text>
+            <rect class="flow-node flow-node-hero" x="102" y="30" width="88" height="38" rx="6"/><text class="flow-node-label" x="146" y="43">Pubsub</text><text class="flow-node-sublabel" x="146" y="59">filter · resolve</text>
+            <rect class="flow-node" x="210" y="34" width="74" height="30" rx="6"/><text class="flow-node-label" x="247" y="49">Ingestion</text>
+            <rect class="flow-node" x="304" y="34" width="70" height="30" rx="6"/><text class="flow-node-label" x="339" y="49">Queue</text>
+            <rect class="flow-node flow-node-hero" x="394" y="34" width="96" height="30" rx="6"/><text class="flow-node-label" x="442" y="49">OCR Worker</text>
+            <g transform="translate(442, 105)">
+              <circle r="14" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="1.2"/>
+              <g stroke="#06b6d4" stroke-width="1.4">
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite"/>
+                <line x1="-9" y1="0" x2="9" y2="0"/>
+                <line x1="0" y1="-9" x2="0" y2="9"/>
+                <line x1="-6.4" y1="-6.4" x2="6.4" y2="6.4"/>
+                <line x1="-6.4" y1="6.4" x2="6.4" y2="-6.4"/>
+              </g>
+            </g>
+            <text class="flow-node-sublabel" x="442" y="138">Gemini OCR</text>
+            <rect class="flow-node" x="304" y="155" width="80" height="30" rx="6"/><text class="flow-node-label" x="344" y="170">Invoice</text>
+            <rect class="flow-node flow-node-warn" x="180" y="155" width="94" height="30" rx="6"/><text class="flow-node-label" x="227" y="170">Approval</text>
+            <rect class="flow-node" x="12" y="225" width="90" height="30" rx="6"/><text class="flow-node-label" x="57" y="240">Bulk Payment</text>
+            <rect class="flow-node" x="130" y="225" width="90" height="30" rx="6"/><text class="flow-node-label" x="175" y="240">ERP Sync</text>
+            <text class="flow-node-sublabel" x="250" y="285">Multi-layer approval · SAP HANA / Xero downstream</text>
+            <path class="flow-path" d="M 80 49 H 102 M 190 49 H 210 M 284 49 H 304 M 374 49 H 394"/>
+            <path class="flow-path" d="M 442 64 V 91"/>
+            <path class="flow-path" d="M 442 155 V 145 L 384 145 L 384 155"/>
+            <path class="flow-path" d="M 304 170 L 274 170"/>
+            <path class="flow-path" d="M 227 185 Q 140 210 57 225"/>
+            <path class="flow-path" d="M 227 185 Q 200 210 175 225"/>
+            <path id="oe-chain" fill="none" stroke="none" d="M 80 49 L 102 49 L 190 49 L 210 49 L 284 49 L 304 49 L 374 49 L 394 49"/>
+            <path id="oe-worker" fill="none" stroke="none" d="M 442 64 L 442 91"/>
+            <path id="oe-inv" fill="none" stroke="none" d="M 442 145 L 384 145 L 384 155"/>
+            <path id="oe-app" fill="none" stroke="none" d="M 304 170 L 274 170"/>
+            <path id="oe-pay" fill="none" stroke="none" d="M 227 185 Q 140 210 57 225"/>
+            <path id="oe-erp" fill="none" stroke="none" d="M 227 185 Q 200 210 175 225"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="4s" repeatCount="indefinite"><mpath xlink:href="#oe-chain"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="2.5s" repeatCount="indefinite"><mpath xlink:href="#oe-worker"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="0.5s" repeatCount="indefinite"><mpath xlink:href="#oe-inv"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="0.8s" repeatCount="indefinite"><mpath xlink:href="#oe-app"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="1.8s" begin="1.2s" repeatCount="indefinite"><mpath xlink:href="#oe-pay"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="1.8s" begin="1.8s" repeatCount="indefinite"><mpath xlink:href="#oe-erp"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 03 · Sequence Diagram — Form Path -->
@@ -2149,6 +2384,7 @@ sequenceDiagram
         <div class="slide-label">Entry path B · Dashboard form</div>
         <h2>Form <span class="c-cyan">Bulk Upload</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2182,6 +2418,48 @@ sequenceDiagram
     Note over D: Failed files run as separate job — never auto-poison original
   end
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated OCR dashboard path: user uploads files, background processor calls OCR engine (spinning), creates invoices, triggers approval, and streams progress back to dashboard">
+            <text x="8" y="14" class="flow-title">OCR · Dashboard Form Path</text>
+            <rect class="flow-node" x="12" y="34" width="60" height="30" rx="6"/><text class="flow-node-label" x="42" y="49">User</text>
+            <rect class="flow-node flow-node-hero" x="94" y="34" width="90" height="30" rx="6"/><text class="flow-node-label" x="139" y="49">Dashboard</text>
+            <rect class="flow-node" x="206" y="34" width="82" height="30" rx="6"/><text class="flow-node-label" x="247" y="49">Upload API</text>
+            <rect class="flow-node" x="310" y="34" width="110" height="30" rx="6"/><text class="flow-node-label" x="365" y="49">BG Processor</text>
+            <g transform="translate(365, 115)">
+              <circle r="15" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="1.2"/>
+              <g stroke="#06b6d4" stroke-width="1.5">
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="2.5s" repeatCount="indefinite"/>
+                <line x1="-9" y1="0" x2="9" y2="0"/>
+                <line x1="0" y1="-9" x2="0" y2="9"/>
+                <line x1="-6.4" y1="-6.4" x2="6.4" y2="6.4"/>
+                <line x1="-6.4" y1="6.4" x2="6.4" y2="-6.4"/>
+              </g>
+            </g>
+            <text class="flow-node-sublabel" x="365" y="150">OCR Engine</text>
+            <rect class="flow-node" x="310" y="170" width="82" height="30" rx="6"/><text class="flow-node-label" x="351" y="185">Invoice</text>
+            <rect class="flow-node flow-node-warn" x="205" y="170" width="88" height="30" rx="6"/><text class="flow-node-label" x="249" y="185">Approval</text>
+            <rect class="flow-node" x="30" y="235" width="180" height="34" rx="6"/><text class="flow-node-label" x="120" y="248">Progress grid</text><text class="flow-node-sublabel" x="120" y="262">x / n · % complete</text>
+            <text class="flow-node-sublabel" x="250" y="295">Failed files → new session · never poisons original job</text>
+            <path class="flow-path" d="M 72 49 H 94 M 184 49 H 206 M 288 49 H 310"/>
+            <path class="flow-path" d="M 365 64 V 100"/>
+            <path class="flow-path" d="M 365 130 V 170"/>
+            <path class="flow-path" d="M 310 185 L 293 185"/>
+            <path class="flow-path" d="M 249 200 Q 180 220 120 235"/>
+            <path class="flow-path" d="M 139 64 Q 90 130 120 235"/>
+            <path id="ob-in" fill="none" stroke="none" d="M 72 49 L 94 49 L 184 49 L 206 49 L 288 49 L 310 49"/>
+            <path id="ob-ocr" fill="none" stroke="none" d="M 365 64 L 365 100"/>
+            <path id="ob-invp" fill="none" stroke="none" d="M 365 130 L 365 170"/>
+            <path id="ob-app" fill="none" stroke="none" d="M 310 185 L 293 185"/>
+            <path id="ob-prog" fill="none" stroke="none" d="M 139 64 Q 90 130 120 235"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath xlink:href="#ob-in"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s" begin="0s" repeatCount="indefinite"><mpath xlink:href="#ob-ocr"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s" begin="0.5s" repeatCount="indefinite"><mpath xlink:href="#ob-invp"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.7s" begin="0.9s" repeatCount="indefinite"><mpath xlink:href="#ob-app"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="2.2s" begin="0.4s" repeatCount="indefinite"><mpath xlink:href="#ob-prog"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="2.2s" begin="1.2s" repeatCount="indefinite"><mpath xlink:href="#ob-prog"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 04 · Sequence Diagram — Slack Observability -->
@@ -2189,6 +2467,7 @@ sequenceDiagram
         <div class="slide-label">Realtime observability</div>
         <h2>Slack <span class="c-cyan">Thread Story</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2209,6 +2488,33 @@ sequenceDiagram
     Note over OP: Ops decides — ticket sender OR self-handle
   end
   Note over SL: Everyone watches the full pipeline live in one thread
+        </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated observability: OCR worker emits per-stage replies to a Slack thread; failures alert the ops team">
+            <text x="8" y="14" class="flow-title">Slack · Live Thread</text>
+            <rect class="flow-node flow-node-hero" x="14" y="115" width="96" height="38" rx="6"/><text class="flow-node-label" x="62" y="128">OCR Worker</text><text class="flow-node-sublabel" x="62" y="144">per-stage emit</text>
+            <rect class="flow-node flow-node-hero" x="200" y="55" width="120" height="180" rx="10"/>
+            <text class="flow-node-label" x="260" y="72">#ops-ocr</text>
+            <text class="flow-node-sublabel" x="260" y="86">1 bundle = 1 thread</text>
+            <line x1="215" y1="94" x2="305" y2="94" stroke="#334155" stroke-width="0.6"/>
+            <g><rect x="215" y="102" width="90" height="14" rx="3" fill="rgba(6,182,212,0.14)" stroke="rgba(6,182,212,0.35)" stroke-width="0.6"/><text x="260" y="111" class="flow-node-sublabel">ingest received</text><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0s;5s;10s;15s" fill="freeze"/></g>
+            <g><rect x="215" y="122" width="90" height="14" rx="3" fill="rgba(6,182,212,0.14)" stroke="rgba(6,182,212,0.35)" stroke-width="0.6"/><text x="260" y="131" class="flow-node-sublabel">OCR done</text><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1s;6s;11s;16s" fill="freeze"/></g>
+            <g><rect x="215" y="142" width="90" height="14" rx="3" fill="rgba(6,182,212,0.14)" stroke="rgba(6,182,212,0.35)" stroke-width="0.6"/><text x="260" y="151" class="flow-node-sublabel">mapping done</text><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="2s;7s;12s;17s" fill="freeze"/></g>
+            <g><rect x="215" y="162" width="90" height="14" rx="3" fill="rgba(52,211,153,0.14)" stroke="rgba(52,211,153,0.35)" stroke-width="0.6"/><text x="260" y="171" class="flow-node-sublabel" fill="#34d399">invoice created</text><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="3s;8s;13s;18s" fill="freeze"/></g>
+            <g><rect x="215" y="200" width="90" height="14" rx="3" fill="rgba(251,191,36,0.14)" stroke="rgba(251,191,36,0.4)" stroke-width="0.6"/><text x="260" y="209" class="flow-node-sublabel" fill="#fbbf24">⚠  failure</text><animate attributeName="opacity" from="0" to="0" dur="0.1s" begin="0s" fill="freeze"/><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="18s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur="0.4s" begin="24s" fill="freeze"/></g>
+            <rect class="flow-node flow-node-warn" x="390" y="115" width="96" height="38" rx="6"/><text class="flow-node-label" x="438" y="128">Ops Team</text><text class="flow-node-sublabel" x="438" y="144">alert only on ❌</text>
+            <path class="flow-path" d="M 110 134 L 200 134"/>
+            <path class="flow-path" d="M 320 134 L 390 134"/>
+            <path id="sl-emit" fill="none" stroke="none" d="M 110 134 L 200 134"/>
+            <path id="sl-alert" fill="none" stroke="none" d="M 320 134 L 390 134"/>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="0.8s" begin="0s;5s;10s;15s"    repeatCount="5"><mpath xlink:href="#sl-emit"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="0.8s" begin="1s;6s;11s;16s"    repeatCount="5"><mpath xlink:href="#sl-emit"/></animateMotion></circle>
+            <circle class="flow-packet" r="3.5"><animateMotion dur="0.8s" begin="2s;7s;12s;17s"    repeatCount="5"><mpath xlink:href="#sl-emit"/></animateMotion></circle>
+            <circle class="flow-packet res" r="3.5"><animateMotion dur="0.8s" begin="3s;8s;13s;18s" repeatCount="5"><mpath xlink:href="#sl-emit"/></animateMotion></circle>
+            <circle class="flow-packet warn" r="4"><animateMotion dur="0.8s" begin="18.5s;23.5s" repeatCount="indefinite"><mpath xlink:href="#sl-alert"/></animateMotion></circle>
+            <text class="flow-node-sublabel" x="250" y="282">Watchers see the pipeline live · alert only when it breaks</text>
+          </svg>
+        </div>
         </div>
       </div>
 
@@ -2290,6 +2596,7 @@ sequenceDiagram
         <div class="slide-label">Foundational pattern</div>
         <h2>Submit &amp; <span class="c-cyan">Async Poll</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2331,6 +2638,39 @@ sequenceDiagram
     end
   end
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated Baliklayar canonical flow: user submit chain synchronously enters DB, background cron scheduler polls vendor every minute, results write to Postgres and Object Store">
+            <text x="8" y="14" class="flow-title">Submit + Poll · Two Loops</text>
+            <text class="flow-caption" x="8" y="30">Submit path</text>
+            <rect class="flow-node" x="10" y="42" width="52" height="28" rx="6"/><text class="flow-node-label" x="36" y="56">User</text>
+            <rect class="flow-node" x="80" y="42" width="66" height="28" rx="6"/><text class="flow-node-label" x="113" y="56">Frontend</text>
+            <rect class="flow-node flow-node-hero" x="164" y="42" width="80" height="28" rx="6"/><text class="flow-node-label" x="204" y="56">Backend</text>
+            <rect class="flow-node" x="262" y="42" width="80" height="28" rx="6"/><text class="flow-node-label" x="302" y="56">Vendor</text>
+            <rect class="flow-node" x="360" y="42" width="76" height="28" rx="6"/><text class="flow-node-label" x="398" y="56">Postgres</text>
+            <text class="flow-caption" x="8" y="120">Poll path (cron 1m)</text>
+            <rect class="flow-node flow-node-hero" x="10" y="134" width="94" height="34" rx="6"/><text class="flow-node-label" x="57" y="152">Scheduler</text><text class="flow-node-sublabel" x="57" y="163">cron 1m</text>
+            <rect class="flow-node flow-node-hero" x="128" y="134" width="80" height="34" rx="6"/><text class="flow-node-label" x="168" y="152">Backend</text>
+            <rect class="flow-node" x="232" y="134" width="80" height="34" rx="6"/><text class="flow-node-label" x="272" y="152">Vendor</text>
+            <rect class="flow-node" x="336" y="134" width="80" height="34" rx="6"/><text class="flow-node-label" x="376" y="152">Postgres</text>
+            <rect class="flow-node flow-node-hero" x="336" y="200" width="80" height="34" rx="6"/><text class="flow-node-label" x="376" y="218">Object</text><text class="flow-node-sublabel" x="376" y="228">Store</text>
+            <text class="flow-node-sublabel" x="250" y="270">Frontend polls OUR DB every 10s · never the vendor</text>
+            <text class="flow-node-sublabel" x="250" y="284">Failure → auto-refund credit + status=failed</text>
+            <path class="flow-path" d="M 62 56 H 80 M 146 56 H 164 M 244 56 H 262 M 342 56 H 360"/>
+            <path class="flow-path" d="M 104 151 H 128 M 208 151 H 232 M 312 151 H 336"/>
+            <path class="flow-path" d="M 376 168 V 200"/>
+            <path id="bs-submit" fill="none" stroke="none" d="M 62 56 L 80 56 L 146 56 L 164 56 L 244 56 L 262 56 L 342 56 L 360 56"/>
+            <path id="bs-poll1" fill="none" stroke="none" d="M 104 151 L 128 151"/>
+            <path id="bs-poll2" fill="none" stroke="none" d="M 208 151 L 232 151"/>
+            <path id="bs-res" fill="none" stroke="none" d="M 312 151 L 336 151"/>
+            <path id="bs-obj" fill="none" stroke="none" d="M 376 168 L 376 200"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="3.5s" repeatCount="indefinite"><mpath xlink:href="#bs-submit"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.9s" begin="0s;2.5s;5s"    repeatCount="indefinite"><mpath xlink:href="#bs-poll1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.9s" begin="0.5s;3s;5.5s" repeatCount="indefinite"><mpath xlink:href="#bs-poll2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.9s" begin="1.2s;3.7s;6.2s" repeatCount="indefinite"><mpath xlink:href="#bs-res"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="1.6s;4.1s;6.6s" repeatCount="indefinite"><mpath xlink:href="#bs-obj"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 03 · Sequence Diagram — Motion Control vendor router -->
@@ -2338,6 +2678,7 @@ sequenceDiagram
         <div class="slide-label">Smart routing</div>
         <h2>Motion <span class="c-cyan">Vendor Router</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2381,6 +2722,41 @@ sequenceDiagram
     end
   end
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated Motion vendor router: requests routed by ref-video duration between Vendor A (short) and Vendor B (long); results converge to Object Store and Postgres">
+            <text x="8" y="14" class="flow-title">Motion · Vendor Router</text>
+            <rect class="flow-node" x="10" y="40" width="52" height="30" rx="6"/><text class="flow-node-label" x="36" y="55">User</text>
+            <rect class="flow-node flow-node-hero" x="82" y="40" width="80" height="30" rx="6"/><text class="flow-node-label" x="122" y="55">Backend</text>
+            <rect class="flow-node flow-node-warn" x="180" y="40" width="88" height="30" rx="6"/><text class="flow-node-label" x="224" y="53">Router</text><text class="flow-node-sublabel" x="224" y="64">by duration</text>
+            <rect class="flow-node" x="298" y="10" width="94" height="30" rx="6"/><text class="flow-node-label" x="345" y="22">Vendor A</text><text class="flow-node-sublabel" x="345" y="34">short · bytes</text>
+            <rect class="flow-node" x="298" y="70" width="94" height="30" rx="6"/><text class="flow-node-label" x="345" y="82">Vendor B</text><text class="flow-node-sublabel" x="345" y="94">long · URL-only</text>
+            <rect class="flow-node flow-node-hero" x="10" y="145" width="94" height="34" rx="6"/><text class="flow-node-label" x="57" y="163">Scheduler</text><text class="flow-node-sublabel" x="57" y="174">cron 1m</text>
+            <rect class="flow-node flow-node-hero" x="128" y="145" width="80" height="34" rx="6"/><text class="flow-node-label" x="168" y="163">Backend</text>
+            <rect class="flow-node" x="232" y="145" width="80" height="34" rx="6"/><text class="flow-node-label" x="272" y="163">Vendor</text>
+            <rect class="flow-node" x="336" y="145" width="80" height="34" rx="6"/><text class="flow-node-label" x="376" y="163">Postgres</text>
+            <rect class="flow-node flow-node-hero" x="336" y="205" width="80" height="34" rx="6"/><text class="flow-node-label" x="376" y="223">Object</text><text class="flow-node-sublabel" x="376" y="233">Store</text>
+            <text class="flow-node-sublabel" x="250" y="273">SSRF allowlist + DB claim-lock prevents duplicate downloads</text>
+            <text class="flow-node-sublabel" x="250" y="286">Vendor-OK but download-fail → retry (no refund)</text>
+            <path class="flow-path" d="M 62 55 H 82 M 162 55 H 180 M 268 45 Q 285 30 298 25 M 268 65 Q 285 80 298 85"/>
+            <path class="flow-path" d="M 104 162 H 128 M 208 162 H 232 M 312 162 H 336"/>
+            <path class="flow-path" d="M 376 179 V 205"/>
+            <path id="br-in" fill="none" stroke="none" d="M 62 55 L 82 55 L 162 55 L 180 55"/>
+            <path id="br-a" fill="none" stroke="none" d="M 268 55 Q 285 32 298 25"/>
+            <path id="br-b" fill="none" stroke="none" d="M 268 55 Q 285 78 298 85"/>
+            <path id="br-p1" fill="none" stroke="none" d="M 104 162 L 128 162"/>
+            <path id="br-p2" fill="none" stroke="none" d="M 208 162 L 232 162"/>
+            <path id="br-res" fill="none" stroke="none" d="M 312 162 L 336 162"/>
+            <path id="br-obj" fill="none" stroke="none" d="M 376 179 L 376 205"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="2.5s" repeatCount="indefinite"><mpath xlink:href="#br-in"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s" begin="0s;5s"    repeatCount="indefinite"><mpath xlink:href="#br-a"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s" begin="2.5s;7.5s" repeatCount="indefinite"><mpath xlink:href="#br-b"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.9s" begin="0s;2.5s;5s"    repeatCount="indefinite"><mpath xlink:href="#br-p1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.9s" begin="0.5s;3s;5.5s" repeatCount="indefinite"><mpath xlink:href="#br-p2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.9s" begin="1.2s;3.7s;6.2s" repeatCount="indefinite"><mpath xlink:href="#br-res"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1.2s" begin="1.6s;4.1s;6.6s" repeatCount="indefinite"><mpath xlink:href="#br-obj"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 04 · Sequence Diagram — Freeform multi-model dispatcher -->
@@ -2388,6 +2764,7 @@ sequenceDiagram
         <div class="slide-label">7 engines, 1 endpoint</div>
         <h2>Freeform <span class="c-cyan">Dispatcher</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2418,6 +2795,38 @@ sequenceDiagram
   BE->>DB: INSERT freeform_tasks (model, mode, status=submitted)
   BE-->>FE: 201 {task_id, credits_used}
   Note over FE: FE polls every 5s — same drain pattern as canonical
+        </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated freeform multi-model dispatcher: single endpoint routes to 7 possible engines through Kling API or Vendor Proxy, task IDs return in parallel">
+            <text x="8" y="14" class="flow-title">Freeform · Model Dispatcher</text>
+            <rect class="flow-node" x="10" y="130" width="52" height="30" rx="6"/><text class="flow-node-label" x="36" y="145">User</text>
+            <rect class="flow-node" x="82" y="130" width="70" height="30" rx="6"/><text class="flow-node-label" x="117" y="145">Frontend</text>
+            <rect class="flow-node flow-node-hero" x="172" y="130" width="86" height="30" rx="6"/><text class="flow-node-label" x="215" y="145">Backend</text>
+            <rect class="flow-node flow-node-warn" x="278" y="115" width="96" height="60" rx="8"/><text class="flow-node-label" x="326" y="140">Dispatcher</text><text class="flow-node-sublabel" x="326" y="153">route(model,</text><text class="flow-node-sublabel" x="326" y="164">mode)</text>
+            <rect class="flow-node" x="404" y="40" width="86" height="28" rx="6"/><text class="flow-node-label" x="447" y="54">Kling</text>
+            <rect class="flow-node" x="404" y="86" width="86" height="28" rx="6"/><text class="flow-node-label" x="447" y="100">Seedance</text>
+            <rect class="flow-node" x="404" y="132" width="86" height="28" rx="6"/><text class="flow-node-label" x="447" y="146">Veo</text>
+            <rect class="flow-node" x="404" y="178" width="86" height="28" rx="6"/><text class="flow-node-label" x="447" y="192">Omni-Flash</text>
+            <rect class="flow-node" x="404" y="224" width="86" height="28" rx="6"/><text class="flow-node-label" x="447" y="238">Kling Motion</text>
+            <text class="flow-node-sublabel" x="447" y="270">7 engines · 1 endpoint · shared drain</text>
+            <text class="flow-node-sublabel" x="215" y="200">Validate · dedup · max-3 in-flight</text>
+            <text class="flow-node-sublabel" x="215" y="212">Atomic credit deduction</text>
+            <path class="flow-path" d="M 62 145 H 82 M 152 145 H 172 M 258 145 H 278"/>
+            <path class="flow-path" d="M 374 140 Q 390 90 404 54 M 374 143 Q 390 115 404 100 M 374 145 H 404 M 374 148 Q 390 175 404 192 M 374 152 Q 390 205 404 238"/>
+            <path id="bf-in" fill="none" stroke="none" d="M 62 145 L 82 145 L 152 145 L 172 145 L 258 145 L 278 145"/>
+            <path id="bf-k1" fill="none" stroke="none" d="M 374 140 Q 390 90 404 54"/>
+            <path id="bf-k2" fill="none" stroke="none" d="M 374 143 Q 390 115 404 100"/>
+            <path id="bf-k3" fill="none" stroke="none" d="M 374 145 L 404 145"/>
+            <path id="bf-k4" fill="none" stroke="none" d="M 374 148 Q 390 175 404 192"/>
+            <path id="bf-k5" fill="none" stroke="none" d="M 374 152 Q 390 205 404 238"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="3s" repeatCount="indefinite"><mpath xlink:href="#bf-in"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="0s;5s"    repeatCount="indefinite"><mpath xlink:href="#bf-k1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="1s;6s"    repeatCount="indefinite"><mpath xlink:href="#bf-k2"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="2s;7s"    repeatCount="indefinite"><mpath xlink:href="#bf-k3"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="3s;8s"    repeatCount="indefinite"><mpath xlink:href="#bf-k4"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.4s" begin="4s;9s"    repeatCount="indefinite"><mpath xlink:href="#bf-k5"/></animateMotion></circle>
+          </svg>
+        </div>
         </div>
       </div>
 
@@ -2539,6 +2948,7 @@ sequenceDiagram
         <div class="slide-label">End-to-end flow</div>
         <h2>4-Stage <span class="c-cyan">Pipeline</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2573,6 +2983,57 @@ sequenceDiagram
   S3->>FS: dashboard.html (updated)
   deactivate S3
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated WC2026 four-stage pipeline: baseline, LLM augmentation, populator, renderer — each stage passes an artifact to the next through the filesystem">
+            <text x="8" y="14" class="flow-title">Pipeline · 4 Stages</text>
+            <rect class="flow-node" x="10" y="40" width="60" height="34" rx="6"/><text class="flow-node-label" x="40" y="58">Operator</text>
+            <g>
+              <rect class="flow-node flow-node-hero" x="80" y="40" width="88" height="34" rx="6">
+                <animate attributeName="stroke-opacity" from="0.4" to="1" dur="0.8s" begin="0s;5s" repeatCount="indefinite"/>
+              </rect>
+              <text class="flow-node-label" x="124" y="53">Stage 0</text><text class="flow-node-sublabel" x="124" y="65">baseline · xG</text>
+            </g>
+            <g>
+              <rect class="flow-node flow-node-hero" x="178" y="40" width="88" height="34" rx="6">
+                <animate attributeName="stroke-opacity" from="0.4" to="1" dur="0.8s" begin="1s;6s" repeatCount="indefinite"/>
+              </rect>
+              <text class="flow-node-label" x="222" y="53">Stage 1</text><text class="flow-node-sublabel" x="222" y="65">LLM · 3× models</text>
+            </g>
+            <g>
+              <rect class="flow-node flow-node-hero" x="276" y="40" width="88" height="34" rx="6">
+                <animate attributeName="stroke-opacity" from="0.4" to="1" dur="0.8s" begin="2.2s;7.2s" repeatCount="indefinite"/>
+              </rect>
+              <text class="flow-node-label" x="320" y="53">Stage 2</text><text class="flow-node-sublabel" x="320" y="65">consensus</text>
+            </g>
+            <g>
+              <rect class="flow-node flow-node-hero" x="374" y="40" width="88" height="34" rx="6">
+                <animate attributeName="stroke-opacity" from="0.4" to="1" dur="0.8s" begin="3.4s;8.4s" repeatCount="indefinite"/>
+              </rect>
+              <text class="flow-node-label" x="418" y="53">Stage 3</text><text class="flow-node-sublabel" x="418" y="65">render html</text>
+            </g>
+            <rect class="flow-node flow-node-warn" x="80" y="150" width="382" height="46" rx="10"/>
+            <text class="flow-node-label" x="271" y="167">Filesystem · artifact bus</text>
+            <text class="flow-node-sublabel" x="130" y="185">predictions_v2</text>
+            <text class="flow-node-sublabel" x="230" y="185">multi_v3</text>
+            <text class="flow-node-sublabel" x="320" y="185">populated_data</text>
+            <text class="flow-node-sublabel" x="420" y="185">dashboard.html</text>
+            <text class="flow-node-sublabel" x="250" y="240">Each stage reads/writes JSON artifacts · resumable · idempotent</text>
+            <text class="flow-node-sublabel" x="250" y="254">Stage 1: 3 workers · 13 RPM cap · retry 3× · exponential backoff</text>
+            <path class="flow-path" d="M 70 57 H 80 M 168 57 H 178 M 266 57 H 276 M 364 57 H 374"/>
+            <path class="flow-path" d="M 124 74 V 150 M 222 74 V 150 M 320 74 V 150 M 418 74 V 150"/>
+            <path id="pl-chain" fill="none" stroke="none" d="M 70 57 L 80 57 L 168 57 L 178 57 L 266 57 L 276 57 L 364 57 L 374 57 L 462 57"/>
+            <path id="pl-w0" fill="none" stroke="none" d="M 124 74 L 124 150"/>
+            <path id="pl-w1" fill="none" stroke="none" d="M 222 74 L 222 150"/>
+            <path id="pl-w2" fill="none" stroke="none" d="M 320 74 L 320 150"/>
+            <path id="pl-w3" fill="none" stroke="none" d="M 418 74 L 418 150"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="5s" repeatCount="indefinite"><mpath xlink:href="#pl-chain"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="0.6s;5.6s" repeatCount="indefinite"><mpath xlink:href="#pl-w0"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="1.8s;6.8s" repeatCount="indefinite"><mpath xlink:href="#pl-w1"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="3s;8s"     repeatCount="indefinite"><mpath xlink:href="#pl-w2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="4.2s;9.2s" repeatCount="indefinite"><mpath xlink:href="#pl-w3"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 04 · Data Pipeline Flow -->
@@ -2580,6 +3041,7 @@ sequenceDiagram
         <div class="slide-label">From raw JSON to consensus</div>
         <h2>Data <span class="c-cyan">Pipeline</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 flowchart TB
   subgraph Ing["1 · Ingestion (6 raw sources)"]
@@ -2624,6 +3086,59 @@ flowchart TB
   LLM --> Syn
   Syn --> Out
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated data pipeline: six raw sources fan in through enrichment and baseline into three parallel LLM models, converging to consensus and final prediction">
+            <text x="8" y="14" class="flow-title">Ingestion → Consensus</text>
+            <g>
+              <rect class="flow-node" x="10"  y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="45" y="41">Elo</text>
+              <rect class="flow-node" x="86"  y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="121" y="41">FIFA</text>
+              <rect class="flow-node" x="162" y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="197" y="41">Recent</text>
+              <rect class="flow-node" x="238" y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="273" y="41">H2H</text>
+              <rect class="flow-node" x="314" y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="349" y="41">964 WC</text>
+              <rect class="flow-node" x="390" y="28" width="70" height="22" rx="4"/><text class="flow-node-label" x="425" y="41">Groups</text>
+            </g>
+            <rect class="flow-node flow-node-hero" x="80"  y="90" width="140" height="30" rx="6"/><text class="flow-node-label" x="150" y="105">Enrichment</text>
+            <rect class="flow-node flow-node-hero" x="250" y="90" width="180" height="30" rx="6"/><text class="flow-node-label" x="340" y="105">Statistical Baseline</text>
+            <text class="flow-node-sublabel" x="150" y="135">form · risk indicators</text>
+            <text class="flow-node-sublabel" x="340" y="135">Elo · Poisson · xG · verdict</text>
+            <rect class="flow-node flow-node-warn" x="30"  y="165" width="130" height="34" rx="6"/><text class="flow-node-label" x="95" y="180">Opus 4.7</text><text class="flow-node-sublabel" x="95" y="192">+ Sonnet 4.6</text>
+            <rect class="flow-node flow-node-warn" x="180" y="165" width="130" height="34" rx="6"/><text class="flow-node-label" x="245" y="180">Sonnet 4.6</text><text class="flow-node-sublabel" x="245" y="192">explanation model</text>
+            <rect class="flow-node flow-node-warn" x="330" y="165" width="130" height="34" rx="6"/><text class="flow-node-label" x="395" y="180">Gemini 3.5</text><text class="flow-node-sublabel" x="395" y="192">Flash · fallback</text>
+            <rect class="flow-node flow-node-hero" x="120" y="220" width="250" height="30" rx="6"/><text class="flow-node-label" x="245" y="235">Consensus · vote + tiebreaker</text>
+            <rect class="flow-node flow-node-hero" x="180" y="270" width="130" height="26" rx="6"/><text class="flow-node-label" x="245" y="284">populated_data</text>
+            <path class="flow-path" d="M 45 50 Q 100 65 150 90 M 121 50 Q 135 65 150 90 M 197 50 Q 200 65 200 90 M 273 50 Q 280 65 300 90 M 349 50 Q 340 65 330 90 M 425 50 Q 400 65 380 90"/>
+            <path class="flow-path" d="M 150 120 V 165 M 245 120 V 165 M 340 120 V 165"/>
+            <path class="flow-path" d="M 95 199 Q 150 210 245 220 M 245 199 V 220 M 395 199 Q 340 210 245 220"/>
+            <path class="flow-path" d="M 245 250 V 270"/>
+            <path id="fc-s1" fill="none" stroke="none" d="M 45 50 Q 100 65 150 90"/>
+            <path id="fc-s2" fill="none" stroke="none" d="M 121 50 Q 135 65 150 90"/>
+            <path id="fc-s3" fill="none" stroke="none" d="M 197 50 Q 200 65 200 90"/>
+            <path id="fc-s4" fill="none" stroke="none" d="M 273 50 Q 280 65 300 90"/>
+            <path id="fc-s5" fill="none" stroke="none" d="M 349 50 Q 340 65 330 90"/>
+            <path id="fc-s6" fill="none" stroke="none" d="M 425 50 Q 400 65 380 90"/>
+            <path id="fc-l1" fill="none" stroke="none" d="M 150 120 L 95 165"/>
+            <path id="fc-l2" fill="none" stroke="none" d="M 340 120 L 245 165"/>
+            <path id="fc-l3" fill="none" stroke="none" d="M 340 120 L 395 165"/>
+            <path id="fc-c1" fill="none" stroke="none" d="M 95 199 Q 150 210 245 220"/>
+            <path id="fc-c2" fill="none" stroke="none" d="M 245 199 L 245 220"/>
+            <path id="fc-c3" fill="none" stroke="none" d="M 395 199 Q 340 210 245 220"/>
+            <path id="fc-out" fill="none" stroke="none" d="M 245 250 L 245 270"/>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="0s"   repeatCount="indefinite"><mpath xlink:href="#fc-s1"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="0.2s" repeatCount="indefinite"><mpath xlink:href="#fc-s2"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite"><mpath xlink:href="#fc-s3"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="0.6s" repeatCount="indefinite"><mpath xlink:href="#fc-s4"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite"><mpath xlink:href="#fc-s5"/></animateMotion></circle>
+            <circle class="flow-packet json" r="3.5"><animateMotion dur="1.4s" begin="1.0s" repeatCount="indefinite"><mpath xlink:href="#fc-s6"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="1.5s" repeatCount="indefinite"><mpath xlink:href="#fc-l1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="1.5s" repeatCount="indefinite"><mpath xlink:href="#fc-l2"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1.2s" begin="1.5s" repeatCount="indefinite"><mpath xlink:href="#fc-l3"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s" begin="2.7s" repeatCount="indefinite"><mpath xlink:href="#fc-c1"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s" begin="2.7s" repeatCount="indefinite"><mpath xlink:href="#fc-c2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s" begin="2.7s" repeatCount="indefinite"><mpath xlink:href="#fc-c3"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.5s" begin="3.7s" repeatCount="indefinite"><mpath xlink:href="#fc-out"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 05 · Sequence — LLM concurrency + RPM limiter -->
@@ -2631,6 +3146,7 @@ flowchart TB
         <div class="slide-label">Concurrency layer</div>
         <h2>Rate-Limited <span class="c-cyan">LLM Calls</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2662,6 +3178,64 @@ sequenceDiagram
     W->>Sem: release()
   end
         </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated LLM rate limiter: five queued fixtures pass through a semaphore gate with three slots, then a sliding-window rate limiter capped at 13 requests per 60 seconds, then LLM CLI and normalizer">
+            <text x="8" y="14" class="flow-title">Two-Gate Throttle · sem + rpm</text>
+            <text class="flow-caption" x="8" y="34">Queue</text>
+            <g>
+              <circle class="flow-packet json" cx="24" cy="80" r="6"/>
+              <circle class="flow-packet json" cx="46" cy="80" r="6"/>
+              <circle class="flow-packet json" cx="68" cy="80" r="6"/>
+              <circle class="flow-packet json" cx="90" cy="80" r="6"/>
+              <circle class="flow-packet json" cx="112" cy="80" r="6"/>
+            </g>
+            <rect class="flow-node flow-node-hero" x="140" y="52" width="90" height="60" rx="8"/>
+            <text class="flow-node-label" x="185" y="66">Semaphore</text>
+            <text class="flow-node-sublabel" x="185" y="78">cap = 3</text>
+            <circle cx="160" cy="94" r="5" fill="rgba(6,182,212,0.35)" stroke="#06b6d4" stroke-width="1"/>
+            <circle cx="185" cy="94" r="5" fill="rgba(6,182,212,0.35)" stroke="#06b6d4" stroke-width="1"/>
+            <circle cx="210" cy="94" r="5" fill="rgba(6,182,212,0.35)" stroke="#06b6d4" stroke-width="1"/>
+            <rect class="flow-node flow-node-warn" x="245" y="52" width="110" height="60" rx="8"/>
+            <text class="flow-node-label" x="300" y="66">Rate Limiter</text>
+            <text class="flow-node-sublabel" x="300" y="78">13 / 60s window</text>
+            <rect x="255" y="88" width="90" height="14" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.4)" stroke-width="0.6"/>
+            <rect x="255" y="88" width="20" height="14" fill="rgba(167,139,250,0.55)">
+              <animate attributeName="width" values="20;90;20" dur="4s" repeatCount="indefinite"/>
+            </rect>
+            <rect class="flow-node flow-node-hero" x="368" y="52" width="80" height="60" rx="8"/>
+            <text class="flow-node-label" x="408" y="66">LLM CLI</text>
+            <text class="flow-node-sublabel" x="408" y="78">stdin/stdout</text>
+            <g transform="translate(408, 96)">
+              <circle r="10" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="1.1"/>
+              <g stroke="#06b6d4" stroke-width="1.2">
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="2s" repeatCount="indefinite"/>
+                <line x1="-6" y1="0" x2="6" y2="0"/>
+                <line x1="0" y1="-6" x2="0" y2="6"/>
+              </g>
+            </g>
+            <rect class="flow-node flow-node-hero" x="180" y="180" width="140" height="42" rx="8"/>
+            <text class="flow-node-label" x="250" y="196">JSON Normalizer</text>
+            <text class="flow-node-sublabel" x="250" y="211">5+ shape variants · fence strip</text>
+            <rect class="flow-node" x="180" y="248" width="140" height="30" rx="6"/><text class="flow-node-label" x="250" y="263">multi_llm[model] = result</text>
+            <text class="flow-node-sublabel" x="250" y="298">Retry 3× · exponential backoff 2s / 4s / 8s</text>
+            <path class="flow-path" d="M 130 80 H 140 M 230 80 H 245 M 355 80 H 368"/>
+            <path class="flow-path" d="M 408 112 V 165 M 408 165 L 250 180"/>
+            <path class="flow-path" d="M 250 222 V 248"/>
+            <path id="rl-p1" fill="none" stroke="none" d="M 130 80 L 140 80"/>
+            <path id="rl-p2" fill="none" stroke="none" d="M 230 80 L 245 80"/>
+            <path id="rl-p3" fill="none" stroke="none" d="M 355 80 L 368 80"/>
+            <path id="rl-out" fill="none" stroke="none" d="M 408 112 L 408 165 L 250 180"/>
+            <path id="rl-final" fill="none" stroke="none" d="M 250 222 L 250 248"/>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.6s" begin="0s;3s"    repeatCount="indefinite"><mpath xlink:href="#rl-p1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.6s" begin="1s;4s"    repeatCount="indefinite"><mpath xlink:href="#rl-p1"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s"   begin="0.6s;3.6s" repeatCount="indefinite"><mpath xlink:href="#rl-p2"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s"   begin="1.6s;4.6s" repeatCount="indefinite"><mpath xlink:href="#rl-p2"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.6s" begin="1.6s;4.6s" repeatCount="indefinite"><mpath xlink:href="#rl-p3"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1.6s" begin="2.4s;5.4s" repeatCount="indefinite"><mpath xlink:href="#rl-out"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.6s" begin="4s;7s"     repeatCount="indefinite"><mpath xlink:href="#rl-final"/></animateMotion></circle>
+          </svg>
+        </div>
+        </div>
       </div>
 
       <!-- 06 · Sequence — Consensus synthesis -->
@@ -2669,6 +3243,7 @@ sequenceDiagram
         <div class="slide-label">Correctness fix</div>
         <h2>Consensus <span class="c-cyan">Synthesis</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2690,6 +3265,43 @@ sequenceDiagram
   AVG->>AVG: Filter scores → only those matching consensus_winner
   AVG->>AVG: round(mean(filtered_scores_a)), round(mean(filtered_scores_b))
   AVG->>OUT: consensus_score + rationale from a matching model
+        </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated consensus synthesis: three LLM predictions fan into filter, vote aggregator with tiebreaker, score averager filtered by consensus winner, then synthesized output">
+            <text x="8" y="14" class="flow-title">Consensus · Vote + Filtered Avg</text>
+            <rect class="flow-node flow-node-hero" x="10" y="34" width="100" height="34" rx="6"/><text class="flow-node-label" x="60" y="48">Opus 4.7</text><text class="flow-node-sublabel" x="60" y="60">score 2-1</text>
+            <rect class="flow-node flow-node-hero" x="10" y="95" width="100" height="34" rx="6"/><text class="flow-node-label" x="60" y="109">Sonnet 4.6</text><text class="flow-node-sublabel" x="60" y="121">score 3-1</text>
+            <rect class="flow-node flow-node-hero" x="10" y="156" width="100" height="34" rx="6"/><text class="flow-node-label" x="60" y="170">Haiku 4.5</text><text class="flow-node-sublabel" x="60" y="182">score 1-2</text>
+            <rect class="flow-node" x="140" y="90" width="70" height="44" rx="6"/><text class="flow-node-label" x="175" y="107">Filter</text><text class="flow-node-sublabel" x="175" y="120">valid score</text>
+            <rect class="flow-node flow-node-warn" x="230" y="70" width="90" height="34" rx="6"/><text class="flow-node-label" x="275" y="84">Vote</text><text class="flow-node-sublabel" x="275" y="96">2/3 team A</text>
+            <rect class="flow-node flow-node-warn" x="230" y="120" width="90" height="34" rx="6"/><text class="flow-node-label" x="275" y="134">Tiebreak</text><text class="flow-node-sublabel" x="275" y="146">Opus &gt; Son &gt; Hk</text>
+            <rect class="flow-node flow-node-hero" x="340" y="90" width="90" height="44" rx="6"/><text class="flow-node-label" x="385" y="107">Averager</text><text class="flow-node-sublabel" x="385" y="120">filtered mean</text>
+            <rect class="flow-node flow-node-hero" x="340" y="180" width="90" height="34" rx="6"/><text class="flow-node-label" x="385" y="194">Synthesized</text><text class="flow-node-sublabel" x="385" y="206">2-1 · winner A</text>
+            <text class="flow-node-sublabel" x="250" y="260">Filter drops non-winner scores</text>
+            <text class="flow-node-sublabel" x="250" y="275">avg(2-1, 3-1) = 2-1  ✓ (naïve avg all three → 2-1 phantom)</text>
+            <text class="flow-node-sublabel" x="250" y="290">Tiebreaker only fires on vote-tie</text>
+            <path class="flow-path" d="M 110 51 Q 130 60 140 105 M 110 112 H 140 M 110 173 Q 130 155 140 128"/>
+            <path class="flow-path" d="M 210 105 Q 220 90 230 87 M 210 118 Q 220 130 230 137"/>
+            <path class="flow-path" d="M 320 87 Q 330 90 340 105 M 320 137 Q 330 130 340 120"/>
+            <path class="flow-path" d="M 385 134 V 180"/>
+            <path id="cs-f1" fill="none" stroke="none" d="M 110 51 Q 130 60 140 105"/>
+            <path id="cs-f2" fill="none" stroke="none" d="M 110 112 L 140 112"/>
+            <path id="cs-f3" fill="none" stroke="none" d="M 110 173 Q 130 155 140 128"/>
+            <path id="cs-v"  fill="none" stroke="none" d="M 210 105 Q 220 90 230 87"/>
+            <path id="cs-tb" fill="none" stroke="none" d="M 210 118 Q 220 130 230 137"/>
+            <path id="cs-a1" fill="none" stroke="none" d="M 320 87 Q 330 90 340 105"/>
+            <path id="cs-a2" fill="none" stroke="none" d="M 320 137 Q 330 130 340 120"/>
+            <path id="cs-out" fill="none" stroke="none" d="M 385 134 L 385 180"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="1.4s" begin="0s"   repeatCount="indefinite"><mpath xlink:href="#cs-f1"/></animateMotion></circle>
+            <circle class="flow-packet json" r="4"><animateMotion dur="1.4s" begin="0s"   repeatCount="indefinite"><mpath xlink:href="#cs-f2"/></animateMotion></circle>
+            <circle class="flow-packet json" r="4"><animateMotion dur="1.4s" begin="0s"   repeatCount="indefinite"><mpath xlink:href="#cs-f3"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="0.8s" begin="1.4s" repeatCount="indefinite"><mpath xlink:href="#cs-v"/></animateMotion></circle>
+            <circle class="flow-packet warn" r="4"><animateMotion dur="0.8s" begin="1.4s" repeatCount="indefinite"><mpath xlink:href="#cs-tb"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="2.2s" repeatCount="indefinite"><mpath xlink:href="#cs-a1"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="0.8s" begin="2.2s" repeatCount="indefinite"><mpath xlink:href="#cs-a2"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s"   begin="3s"   repeatCount="indefinite"><mpath xlink:href="#cs-out"/></animateMotion></circle>
+          </svg>
+        </div>
         </div>
       </div>
 
@@ -2773,6 +3385,7 @@ sequenceDiagram
         <div class="slide-label">Request flow</div>
         <h2>Two-Phase <span class="c-cyan">Sequence</span></h2>
         <div class="divider"></div>
+        <div class="flow-split">
         <div class="mermaid">
 sequenceDiagram
   autonumber
@@ -2803,6 +3416,50 @@ sequenceDiagram
   MW-->>Toped: Signed encrypted ack
   deactivate MW
   Note over Settle: Out-of-band reconciliation
+        </div>
+        <div class="flow-viz">
+          <svg viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Animated RTS encrypted two-phase flow: Tokopedia signs and encrypts request, middleware fetches key from vault, verifies and decrypts, forwards over mTLS to Telkomsel, encrypts response, emits settlement event">
+            <text x="8" y="14" class="flow-title">Encrypted Two-Phase · mTLS</text>
+            <rect class="flow-node" x="10" y="80" width="76" height="34" rx="6"/><text class="flow-node-label" x="48" y="94">Tokopedia</text><text class="flow-node-sublabel" x="48" y="106">merchant</text>
+            <g transform="translate(120, 97)">
+              <rect x="-16" y="-13" width="32" height="26" rx="4" fill="rgba(167,139,250,0.12)" stroke="#a78bfa" stroke-width="1"/>
+              <path d="M -8 -3 v -6 a 8 8 0 0 1 16 0 v 6" fill="none" stroke="#a78bfa" stroke-width="1.2"/>
+              <text class="flow-node-sublabel" x="0" y="34" fill="#a78bfa">encrypt</text>
+            </g>
+            <rect class="flow-node flow-node-hero" x="170" y="80" width="110" height="34" rx="6"/><text class="flow-node-label" x="225" y="94">RTS Middleware</text><text class="flow-node-sublabel" x="225" y="106">verify · decrypt</text>
+            <rect class="flow-node flow-node-warn" x="200" y="20" width="80" height="30" rx="6"/><text class="flow-node-label" x="240" y="34">Key Vault</text><text class="flow-node-sublabel" x="240" y="45">private key</text>
+            <g transform="translate(320, 97)">
+              <rect x="-16" y="-13" width="32" height="26" rx="4" fill="rgba(6,182,212,0.12)" stroke="#06b6d4" stroke-width="1"/>
+              <path d="M -8 -3 v -6 a 8 8 0 0 1 16 0 v 6" fill="none" stroke="#06b6d4" stroke-width="1.2"/>
+              <text class="flow-node-sublabel" x="0" y="34" fill="#06b6d4">mTLS</text>
+            </g>
+            <rect class="flow-node" x="370" y="80" width="116" height="34" rx="6"/><text class="flow-node-label" x="428" y="94">Telkomsel</text><text class="flow-node-sublabel" x="428" y="106">Aggregator</text>
+            <rect class="flow-node flow-node-hero" x="210" y="205" width="100" height="34" rx="6"/><text class="flow-node-label" x="260" y="219">Settlement</text><text class="flow-node-sublabel" x="260" y="231">out-of-band</text>
+            <text class="flow-node-sublabel" x="70" y="150">Phase 1 · Inquiry</text>
+            <text class="flow-node-sublabel" x="70" y="163">amount + status</text>
+            <text class="flow-node-sublabel" x="380" y="150">Phase 2 · Payment</text>
+            <text class="flow-node-sublabel" x="380" y="163">confirmation</text>
+            <text class="flow-node-sublabel" x="250" y="275">Middleware is the ONLY component that holds vault keys</text>
+            <text class="flow-node-sublabel" x="250" y="288">All requests signed · replay protection · mTLS to aggregator</text>
+            <path class="flow-path" d="M 86 97 H 104 M 136 97 H 170 M 280 97 H 304 M 336 97 H 370"/>
+            <path class="flow-path" d="M 225 80 V 50 L 200 40"/>
+            <path class="flow-path" d="M 225 114 Q 240 160 260 205"/>
+            <path id="rt-enc" fill="none" stroke="none" d="M 86 97 L 104 97"/>
+            <path id="rt-in" fill="none" stroke="none" d="M 136 97 L 170 97"/>
+            <path id="rt-key" fill="none" stroke="none" d="M 225 80 L 225 50 L 200 40"/>
+            <path id="rt-fwd" fill="none" stroke="none" d="M 280 97 L 304 97 L 336 97 L 370 97"/>
+            <path id="rt-back" fill="none" stroke="none" d="M 370 97 L 336 97 L 304 97 L 280 97"/>
+            <path id="rt-ack" fill="none" stroke="none" d="M 170 97 L 136 97 L 104 97 L 86 97"/>
+            <path id="rt-set" fill="none" stroke="none" d="M 225 114 Q 240 160 260 205"/>
+            <circle class="flow-packet json" r="4"><animateMotion dur="0.6s" begin="0s;4s"     repeatCount="indefinite"><mpath xlink:href="#rt-enc"/></animateMotion></circle>
+            <circle class="flow-packet enc" r="4"><animateMotion dur="0.8s" begin="0.6s;4.6s"  repeatCount="indefinite"><mpath xlink:href="#rt-in"/></animateMotion></circle>
+            <circle class="flow-packet warn" r="4"><animateMotion dur="0.6s" begin="1.4s;5.4s" repeatCount="indefinite"><mpath xlink:href="#rt-key"/></animateMotion></circle>
+            <circle class="flow-packet" r="4"><animateMotion dur="1s"   begin="2s;6s"          repeatCount="indefinite"><mpath xlink:href="#rt-fwd"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1s" begin="3s;7s"        repeatCount="indefinite"><mpath xlink:href="#rt-back"/></animateMotion></circle>
+            <circle class="flow-packet enc" r="4"><animateMotion dur="0.8s" begin="3.5s;7.5s"  repeatCount="indefinite"><mpath xlink:href="#rt-ack"/></animateMotion></circle>
+            <circle class="flow-packet res" r="4"><animateMotion dur="1.4s" begin="3.5s;7.5s"  repeatCount="indefinite"><mpath xlink:href="#rt-set"/></animateMotion></circle>
+          </svg>
+        </div>
         </div>
       </div>
 
