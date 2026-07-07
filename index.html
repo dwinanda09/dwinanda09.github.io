@@ -331,6 +331,34 @@
     .delay-3 { animation-delay: 0.3s; }
     .delay-4 { animation-delay: 0.4s; }
 
+    /* Hero typewriter cursor */
+    .hero-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.85em;
+      background: currentColor;
+      margin-left: 4px;
+      vertical-align: text-bottom;
+      opacity: 0;
+      border-radius: 1px;
+      transform: translateY(-0.08em);
+    }
+    .is-typing .hero-cursor {
+      opacity: 1;
+      animation: hero-cursor-blink 0.7s steps(2, start) infinite;
+    }
+    @keyframes hero-cursor-blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+    #hero-h1.hero-h1-collapse {
+      transition: opacity 0.45s ease, max-height 0.55s ease, margin 0.55s ease;
+      overflow: hidden;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-cursor { display: none; }
+    }
+
   /* ══════════════════════════════════════════════
      SLIDE DECK OVERLAY — all styles scoped to
      #sdeck-modal to avoid portfolio conflicts
@@ -1053,12 +1081,8 @@
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
       Backend Software Engineer
     </div>
-    <h1 class="fade-up delay-1">
-      Hi, I'm <span class="gradient">Dwi Nanda.</span>
-    </h1>
-    <p class="hero-desc fade-up delay-2">
-      I design and build distributed systems that are efficient, resilient, and scalable. I focus on creating backend architectures that can gracefully handle real-world load.
-    </p>
+    <h1 class="fade-up delay-1" id="hero-h1"><span id="hero-plain">Hi, I'm </span><span class="gradient" id="hero-grad">Dwi Nanda.</span><span class="hero-cursor" aria-hidden="true"></span></h1>
+    <p class="hero-desc fade-up delay-2" id="hero-desc"><span id="hero-desc-text">I design and build distributed systems that are efficient, resilient, and scalable. I focus on creating backend architectures that can gracefully handle real-world load.</span><span class="hero-cursor" aria-hidden="true"></span></p>
     <div class="cta-group fade-up delay-3">
       <a href="mailto:dwnnd09@gmail.com" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -3982,6 +4006,78 @@ sequenceDiagram
     if (Math.abs(dx) > 40) sysdeck_go(dx < 0 ? 1 : -1);
     sysdeck_tx = null;
   });
+
+  // ══════════════════════════════════════════════
+  // HERO TYPEWRITER + MORSE-0 BLINK
+  // Type "Hi, I'm Dwi Nanda." slowly, blink 5× (Morse for 0),
+  // then collapse and type the description faster.
+  // ══════════════════════════════════════════════
+  (function heroTypewriter() {
+    const h1       = document.getElementById('hero-h1');
+    const plainEl  = document.getElementById('hero-plain');
+    const gradEl   = document.getElementById('hero-grad');
+    const desc     = document.getElementById('hero-desc');
+    const descText = document.getElementById('hero-desc-text');
+    if (!h1 || !plainEl || !gradEl || !desc || !descText) { return; }
+    if (matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+
+    const plainStr = plainEl.textContent;
+    const gradStr  = gradEl.textContent;
+    const descStr  = descText.textContent;
+
+    // Wait for layout so we can measure & reserve heights (avoids button jump)
+    requestAnimationFrame(() => {
+      const descHeight = desc.getBoundingClientRect().height;
+      desc.style.minHeight = descHeight + 'px';
+
+      plainEl.textContent  = '';
+      gradEl.textContent   = '';
+      descText.textContent = '';
+      h1.classList.add('is-typing');
+
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const type  = async (el, text, delay) => {
+        for (const ch of text) {
+          el.textContent += ch;
+          await sleep(delay);
+        }
+      };
+
+      (async () => {
+        await sleep(500);                       // let fade-up settle
+        await type(plainEl, plainStr, 85);      // "Hi, I'm " — slower, dramatic
+        await type(gradEl,  gradStr,  90);      // "Dwi Nanda." — same tempo
+        await sleep(450);                       // brief pause
+
+        // Morse for 0 = five long dashes. Blink whole h1 5× — 500ms on / 500ms off (~1s each)
+        h1.classList.remove('is-typing');
+        h1.style.transition = 'opacity 0.05s linear';
+        for (let i = 0; i < 5; i++) {
+          h1.style.opacity = '0';
+          await sleep(500);
+          h1.style.opacity = '1';
+          await sleep(500);
+        }
+
+        // Collapse h1 (opacity + height) so description takes its place
+        h1.classList.add('hero-h1-collapse');
+        const h1Height = h1.getBoundingClientRect().height;
+        h1.style.maxHeight = h1Height + 'px';
+        // eslint-disable-next-line no-unused-expressions
+        h1.offsetHeight;                        // force reflow so max-height animates
+        h1.style.opacity   = '0';
+        h1.style.maxHeight = '0';
+        h1.style.marginTop = '0';
+        h1.style.marginBottom = '0';
+        await sleep(600);
+
+        // Type description — faster (~22ms/char)
+        desc.classList.add('is-typing');
+        await type(descText, descStr, 22);
+        desc.classList.remove('is-typing');
+      })();
+    });
+  })();
 </script>
 </body>
 </html>
