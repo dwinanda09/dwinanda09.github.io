@@ -186,9 +186,9 @@
 | 4 | Argentina vs Switzerland | 3-1 | 3-1 | 🟢 **EXACT** | 3 |
 
 **QF observations**: 🎯🎯🎯🎯 **The pipeline's crown jewel**. Getting 4/4 exact scores in a knockout round is statistically absurd — this is the payoff for:
-- LLM consensus (Sonnet 4.6 + Opus 4.7) via `02_gen_claude_llm.py`
-- KO-adjusted stats (`KO_XG_BASE=2.1`, `KO_DRAW_DAMPING=0.7`)
-- H2H detail enrichment
+- Multi-LLM consensus (Claude Sonnet 4.6 + Opus 4.7)
+- Knockout-adjusted statistical baseline (lower xG floor, draw-damping for elimination psychology)
+- Head-to-head historical detail enrichment
 - Empirical knockout context: penalty shootout signal, tactical archetype matching, altitude fatigue, manager KO experience
 
 **Note**: For ARG-SUI, the pipeline stats predicted 2-0 but actual was 3-1. The user's pick of 3-1 matches — meaning the user must have overridden with the LLM's higher-scoring read, OR this was already an LLM-adjusted verdict. Either way, credited as EXACT.
@@ -248,6 +248,5 @@ Heading into R16, user was **#1 country-wide Indonesia** with a 13.5-point lead.
 
 ## Data provenance
 
-- Source: SuperBru user scorecard (pasted 2026-07-13)
-- Cross-referenced against: `populated_data.json`, `predictions_multi_v3.json`, `h2h_history.json`
-- Pipeline scripts: `pipeline/00_gen_round_of_{32,16}.py`, `00_gen_quarter_finals.py`, `00_gen_semi_finals.py`, `02_gen_claude_llm.py`, `02_populate_data.py`, `03_render_dashboard_new.py`
+- Source: SuperBru user scorecard (as of 2026-07-13)
+- Cross-referenced against the pipeline's own persisted predictions, head-to-head history, and consolidated match data
