@@ -280,14 +280,70 @@
         .md-content td:first-child { color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
         .md-content th:last-child, .md-content td:last-child { text-align: right; }
 
-        /* Emoji-based row highlights */
-        .md-content td:has(> :is(*)) {} /* no-op fallback */
+        /* Row highlights — semantic colors per user spec:
+           Exact = blue, Close = darker green, Result = lighter green, Wrong = red */
+        .row-exact  td { background: linear-gradient(90deg, rgba(96, 165, 250, 0.12), transparent 45%); }
+        .row-close  td { background: linear-gradient(90deg, rgba(5, 150, 105, 0.14),  transparent 45%); }
+        .row-result td { background: linear-gradient(90deg, rgba(52, 211, 153, 0.12), transparent 45%); }
+        .row-wrong  td { background: linear-gradient(90deg, rgba(248, 113, 113, 0.10), transparent 45%); opacity: 0.86; }
 
-        /* Result cell coloring via CSS attribute selectors after JS renders */
-        .row-exact  td { background: linear-gradient(90deg, rgba(52,211,153,0.10), transparent 40%); }
-        .row-close  td { background: linear-gradient(90deg, rgba(251,191,36,0.10), transparent 40%); }
-        .row-result td { background: linear-gradient(90deg, rgba(96,165,250,0.10), transparent 40%); }
-        .row-wrong  td { background: linear-gradient(90deg, rgba(248,113,113,0.08), transparent 40%); opacity: 0.86; }
+        /* Result column badges */
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+        .result-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .result-badge.exact  { color: #60a5fa; background: rgba(96, 165, 250, 0.12); border-color: rgba(96, 165, 250, 0.45); }
+        .result-badge.close  { color: #10b981; background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.45); }
+        .result-badge.result { color: #34d399; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.45); }
+        .result-badge.wrong  { color: #f87171; background: rgba(248, 113, 113, 0.12); border-color: rgba(248, 113, 113, 0.4); }
+
+        /* Team + flag rendering inside fixture cell */
+        .fixture-cell {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+        }
+        .team {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+        .team img.flag-icon {
+            width: 20px;
+            height: 15px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.25);
+            flex-shrink: 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .vs-sep {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75em;
+            color: var(--text-dim);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
 
         /* Loading state */
         .loading-state {
@@ -377,14 +433,77 @@
             }
         })();
 
+        // Country name → ISO-3166 code (flagcdn accepts GB regional codes)
+        const TEAM_FLAGS = {
+            'Mexico': 'mx', 'South Africa': 'za', 'South Korea': 'kr', 'Czechia': 'cz',
+            'Canada': 'ca', 'Bosnia and Herzegovina': 'ba', 'USA': 'us', 'Paraguay': 'py',
+            'Qatar': 'qa', 'Switzerland': 'ch', 'Brazil': 'br', 'Morocco': 'ma',
+            'Haiti': 'ht', 'Scotland': 'gb-sct', 'Australia': 'au', 'Türkiye': 'tr', 'Turkey': 'tr',
+            'Germany': 'de', 'Curaçao': 'cw', 'Curacao': 'cw', 'Netherlands': 'nl', 'Japan': 'jp',
+            'Ivory Coast': 'ci', "Côte d'Ivoire": 'ci', 'Ecuador': 'ec', 'Sweden': 'se', 'Tunisia': 'tn',
+            'Spain': 'es', 'Cape Verde': 'cv', 'Belgium': 'be', 'Egypt': 'eg',
+            'Saudi Arabia': 'sa', 'Uruguay': 'uy', 'Iran': 'ir', 'New Zealand': 'nz',
+            'France': 'fr', 'Senegal': 'sn', 'Iraq': 'iq', 'Norway': 'no',
+            'Argentina': 'ar', 'Algeria': 'dz', 'Austria': 'at', 'Jordan': 'jo',
+            'Portugal': 'pt', 'Congo DR': 'cd', 'DR Congo': 'cd', 'England': 'gb-eng',
+            'Croatia': 'hr', 'Ghana': 'gh', 'Panama': 'pa', 'Colombia': 'co', 'Uzbekistan': 'uz'
+        };
+
+        function flagFor(name) {
+            const iso = TEAM_FLAGS[name.trim()];
+            if (!iso) { return ''; }
+            return '<img class="flag-icon" src="https://flagcdn.com/w40/' + iso + '.png" srcset="https://flagcdn.com/w80/' + iso + '.png 2x" alt="' + name + ' flag" loading="lazy" />';
+        }
+
+        function renderFixtureCell(text) {
+            // Match "Team A vs Team B" — team names may include spaces / punctuation
+            const parts = text.split(/\s+vs\s+/);
+            if (parts.length !== 2) { return null; }
+            const a = parts[0].trim();
+            const b = parts[1].trim();
+            return '<span class="fixture-cell">' +
+                '<span class="team">' + flagFor(a) + '<span>' + a + '</span></span>' +
+                '<span class="vs-sep">vs</span>' +
+                '<span class="team">' + flagFor(b) + '<span>' + b + '</span></span>' +
+                '</span>';
+        }
+
+        function badgeFor(text) {
+            // text like "🟢 EXACT" or "🟡 Close" or "🔵 Result" or "🔴 Wrong"
+            const t = text.toUpperCase();
+            if (t.includes('EXACT'))  { return { cls: 'exact',  label: 'Exact'  }; }
+            if (t.includes('CLOSE'))  { return { cls: 'close',  label: 'Close'  }; }
+            if (t.includes('RESULT')) { return { cls: 'result', label: 'Result' }; }
+            if (t.includes('WRONG'))  { return { cls: 'wrong',  label: 'Wrong'  }; }
+            return null;
+        }
+
         function postProcess(root) {
-            // Highlight rows by result emoji present in the row's cells
             root.querySelectorAll('table tbody tr').forEach((tr) => {
-                const txt = tr.textContent;
-                if (txt.includes('🟢') || txt.includes('EXACT')) { tr.classList.add('row-exact'); }
-                else if (txt.includes('🟡') || txt.includes('Close')) { tr.classList.add('row-close'); }
-                else if (txt.includes('🔵') || txt.includes('Result')) { tr.classList.add('row-result'); }
-                else if (txt.includes('🔴') || txt.includes('Wrong')) { tr.classList.add('row-wrong'); }
+                const cells = tr.querySelectorAll('td');
+                if (!cells.length) { return; }
+
+                // Row-level highlight
+                const rowTxt = tr.textContent;
+                if      (rowTxt.includes('EXACT'))  { tr.classList.add('row-exact');  }
+                else if (rowTxt.includes('Close'))  { tr.classList.add('row-close');  }
+                else if (rowTxt.includes('Result')) { tr.classList.add('row-result'); }
+                else if (rowTxt.includes('Wrong'))  { tr.classList.add('row-wrong');  }
+
+                // Fixture cell: 2nd column (index 1) in the per-round tables
+                if (cells.length >= 6 && cells[1]) {
+                    const fixtureHTML = renderFixtureCell(cells[1].textContent);
+                    if (fixtureHTML) { cells[1].innerHTML = fixtureHTML; }
+                }
+
+                // Result cell: 2nd-to-last column — replace with colored pill badge
+                if (cells.length >= 3) {
+                    const resultCell = cells[cells.length - 2];
+                    const badge = badgeFor(resultCell.textContent);
+                    if (badge) {
+                        resultCell.innerHTML = '<span class="result-badge ' + badge.cls + '">' + badge.label + '</span>';
+                    }
+                }
             });
         }
 
